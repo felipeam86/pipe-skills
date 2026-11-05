@@ -12,15 +12,16 @@ Post no comment and change nothing in the tracker before the user approves the r
 
 ## Scope
 
-- The issues the user names. Else every issue of **List the backlog**, in the scope of the tracker line.
-- Skip an issue that did not change since its last review: its last comment that starts with `**Assessed**` holds the hash of its current description, and `git log <sha>..origin/HEAD -- <paths>`, with the SHA and the paths of that comment, finds no commit. Never skip an issue that the user names.
+- The issues the user names, in `Backlog` or `Todo`; name each other one and say that it is out of scope. Else every issue of **List the backlog**, in the scope of the tracker line.
+- Run `git fetch origin` once, here, so that the subagents do not fetch at the same time. `<default>` is the branch that `pipe-skills:assess` checks.
+- Skip an issue that did not change since its last review: its last comment starts with `**Assessed**`, that comment holds the hash that **Hash the description** gives now, and `git log <sha>..<default> -- <paths>`, with the SHA and the paths of that comment, finds no commit. The hash catches an edit of the description, and the last comment catches a word of the user, which the edit date cannot tell apart from the review comment. Never skip an issue that the user names.
 - State the scope in one line: the number of issues to assess, and the skipped issues with the date of their last review.
 
 ## Assess
 
 Start one fresh subagent for each issue with the Agent tool, at most eight at a time, with the model of this session and the prompt below. Do not fork, so that each subagent starts clean. It only reads, so it needs no worktree. When one ends without its report, ask it for the report with SendMessage.
 
-> Assess the issue `<identifier>` of `<root>`. Read `${CLAUDE_PLUGIN_ROOT}/skills/assess/SKILL.md` and the tracker file `<tracker file>`, and follow them. Change no file and nothing in the tracker. End with this report and nothing more: the verdict and one line of reason; **The code says**, at most five bullets, each with its proof; **Your call**, one question or `none`; **Proposed change**, with the full new text of each section that changes for `drifted`; the checked commit SHA; the checked paths.
+> Assess the issue `<identifier>` of `<root>`. Read `${CLAUDE_PLUGIN_ROOT}/skills/assess/SKILL.md` and the tracker file `<tracker file>`, and follow them. The origin is already fetched: do not fetch. Change no file and nothing in the tracker. End with this report and nothing more: the verdict and one line of reason; **The code says**, at most five bullets, each with its proof; **Your call**, one question or `none`; **Proposed change**, with the full new text of each section that changes for `drifted`; the checked commit SHA; the checked paths.
 
 ## Report
 
@@ -37,10 +38,10 @@ For each approved row only:
    - `superseded`: **Cancel**, as a duplicate when the other issue holds the same work.
    - `obsolete`: **Cancel**.
    - `ask`: the verdict that the user's answer gives.
-2. Then add the review comment, which the skip rule reads. For `drifted`, it is also the comment of the change and its reason. Hash the description after the change with `shasum -a 256`, and keep the first 12 characters:
+2. Then add the review comment, which the skip rule reads. For `drifted`, it is also the comment of the change and its reason. Its hash comes from **Hash the description** after the change, so that the skip rule reads the text the same way:
 
 ```
-**Assessed** <YYYY-MM-DD>: `<verdict>`, on `<default branch>` at `<sha>`, description `<hash>`.
+**Assessed** <YYYY-MM-DD>: `<verdict>`, on `<default>` at `<sha>`, description `<hash>`.
 Paths: `<path>`, `<path>`.
 <the code says, as bullets>
 <the user's decision, quoted, when the row had a question>

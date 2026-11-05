@@ -14,6 +14,7 @@ Use the tools of the Linear MCP server; load them with ToolSearch first. The sta
 ## Operations
 
 - **Read an issue.** `get_issue` with `includeRelations: true`, and `list_comments` with `orderBy: "createdAt"`.
+- **Hash the description.** Read the `description` of `get_issue`, write it unchanged to a new file with the Write tool, and run `shasum -a 256 <file> | cut -c1-12`.
 - **File an issue.** `save_issue` with `team`, `project` (the project of the tracker line, or the outcome in the initiative form), `milestone` (its name, in the project form only), `assignee: "me"`, `state`, `priority` (1 `Urgent`, 2 `High`, 3 `Medium`, 4 `Low`), `blockedBy: ["ACM-40"]`, and `parentId` (the parent identifier) on a child of a parent issue. Give the identifier and the URL. When Linear says the project is not in the team, read the team of the project with `list_projects`.
 - **Edit the description.** `save_issue` with `id` and `patch: [{op: "replace", old_string, new_string}]`, or with `description` for a full rewrite. When the patch fails, read the issue again and copy the text exactly.
 - **Comment.** `save_comment` with `issueId` and `body`.

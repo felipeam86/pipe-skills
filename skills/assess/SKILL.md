@@ -6,24 +6,24 @@ disable-model-invocation: false
 
 # Assess an issue
 
-An issue that waits can drift from the code that it specifies. Give a verdict on one issue, with the evidence. Change no file, post no comment, and change nothing in the tracker: `pipe-skills:sweep` applies a verdict after the user approves it.
+An issue that waits can drift from the code that it specifies. Give a verdict on one issue in `Backlog` or `Todo`, with the evidence. Change no file, post no comment, and change nothing in the tracker: `pipe-skills:sweep` applies a verdict after the user approves it. For an issue in another state, say that it is out of scope, and stop.
 
 The project `CLAUDE.md` names where it tracks work. Read the tracker file for it, `${CLAUDE_PLUGIN_ROOT}/trackers/linear.md` or `${CLAUDE_PLUGIN_ROOT}/trackers/github.md`, and run each operation below as that file says.
 
 ## Read
 
-- Read the issue with its comments, its outcome, and its blockers.
-- The base of the check is the last comment that starts with `**Assessed**`: its commit SHA. Without one, the base is the date the issue was created.
-- Run `git fetch origin`, and check the default branch of the remote, `origin/HEAD`, not the local checkout. Without a remote, check the local default branch.
+- **Read an issue**, with its comments and the date it was created, and **Find the blockers**.
+- The base of the check is the commit SHA of the last review comment of `pipe-skills:sweep`, which starts with `**Assessed**`. Without one, the base is the date the issue was created.
+- The checked branch `<default>` is the default branch of the remote: `origin/HEAD`, or `origin/<name>` with the name from `git remote show origin` when `origin/HEAD` is missing. Run `git fetch origin` first, unless the skill that runs you already did. Without a remote, check the local default branch.
 
 ## Evidence
 
 Each check gives facts with their proof: a path, a commit SHA, a pull request, or an issue.
 
-1. **Names.** Each file, directory, function, command, or module that the issue names still exists, with `git ls-files` and `git grep` on the checked commit. When the issue names none, search by the concepts of its goal, and say that the evidence is weaker.
-2. **Changes.** The commits since the base on the named paths: `git log <sha>..origin/HEAD -- <paths>`, or `git log --since=<date> origin/HEAD -- <paths>`. Read each one, and say what it changed in the facts of **State** and in the steps of **Plan**.
+1. **Names.** Each file, directory, function, command, or module that the issue names as existing still exists, with `git ls-files` and `git grep` on `<default>`. A path that the plan says to create is missing until the work is done, and that is not drift. When the issue names nothing, search by the concepts of its goal, and say that the evidence is weaker.
+2. **Changes.** The commits since the base on the named paths: `git log <sha>..<default> -- <paths>`, or `git log --since=<YYYY-MM-DD> <default> -- <paths>`. Read each one, and say what it changed in the facts of **State** and in the steps of **Plan**.
 3. **Work already done.** Read the code against the **Success criteria**. Search the merged pull requests (`gh pr list --state merged --search <terms>` with a GitHub remote) and the closed issues for the same goal.
-4. **Goal.** The outcome of the issue is still open (**List the outcomes**). Each blocker is still open, or it was closed or canceled.
+4. **Goal.** When the issue has an outcome, it is still open (**List the outcomes**). Each blocker is still open, or it was closed or canceled.
 5. **Overlap.** An open issue of **List the backlog** with the same goal.
 
 ## Verdict
