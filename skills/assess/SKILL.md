@@ -6,14 +6,14 @@ disable-model-invocation: false
 
 # Assess an issue
 
-An issue that waits can drift from the code that it specifies. Give a verdict on one issue in `Backlog` or `Todo`, with the evidence. Change no file, post no comment, and change nothing in the tracker: the session or the skill that ran you applies the verdict after the user approves it. For an issue in another state, say that it is out of scope, and stop.
+An issue that waits can drift from the code that it specifies. Give a verdict on one issue in `Backlog` or `Todo`, with the evidence. Change no file except by the pull of the reference branch, post no comment, and change nothing in the tracker: the session or the skill that ran you applies the verdict after the user approves it, as **Apply a verdict** says. For an issue in another state, say that it is out of scope, and stop.
 
 The project `CLAUDE.md` names where it tracks work. Read the tracker file for it, `${CLAUDE_PLUGIN_ROOT}/trackers/linear.md` or `${CLAUDE_PLUGIN_ROOT}/trackers/github.md`, and run each operation below as that file says.
 
 ## Read
 
 - **Read an issue**, with its comments and the date it was created, and **Find the blockers**.
-- The base of the check is the commit SHA of the last review comment (below). Without one, the base is the date the issue was created.
+- The base of the check comes from the last review comment (below). Its SHA is the base when its branch is `<ref>` and `git merge-base --is-ancestor <sha> <ref>` succeeds. Else its date is the base, because a review on another branch, or a SHA that the repository no longer holds, says nothing about the commits of `<ref>`. Without a review comment, the base is the date the issue was created.
 - The reference branch `<ref>` is the branch you stand on, because the user runs you from the branch that the issue builds on, which can differ from the default branch of the remote. A skill that runs you can name another one. First pull it with `git pull --ff-only`, unless the skill that runs you already did, so that it holds the new commits of its remote. When the pull fails, say so, and check the branch as it is.
 
 ## Evidence
@@ -45,9 +45,22 @@ The code can prove drift, but it cannot prove that the user still wants the goal
 
 Start with the verdict and one line of reason. Then **The code says**, **Your call**, **Proposed change**, and the checked commit SHA with the paths you checked. Run alone, end with one question: may the session apply the proposed change and post the review comment? Run by another skill, give the report in the form that its prompt asks for.
 
+## Apply a verdict
+
+These steps never run in your own run. A session or `pipe-skills:sweep` runs them, only after the user's go:
+
+1. Run the change of the verdict:
+   - `current`: no change.
+   - `drifted`: rewrite the description with the proposed text and `pipe-skills:final-state`, as the Update of `pipe-skills:prd` says.
+   - `done`: **Close**.
+   - `superseded`: **Cancel**, as a duplicate when the other issue holds the same work.
+   - `obsolete`: **Cancel**.
+   - `ask`: the verdict that the user's answer gives.
+2. Then add the review comment, last, so that the next check reads its base from it. For `drifted`, it is also the comment of the change and its reason.
+
 ## Review comment
 
-Whoever applies a verdict after the user's go, a session or `pipe-skills:sweep`, adds this comment last, so that the next check reads its base from it. For `drifted`, it is also the comment of the change and its reason. The hash comes from **Hash the description** after the change:
+The hash comes from **Hash the description** after the change:
 
 ```
 **Assessed** <YYYY-MM-DD>: `<verdict>`, on `<ref>` at `<sha>`, description `<hash>`.

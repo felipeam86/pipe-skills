@@ -14,7 +14,7 @@ Post no comment and change nothing in the tracker before the user approves the r
 
 - The issues the user names, in `Backlog` or `Todo`; name each other one and say that it is out of scope. Else every issue of **List the backlog**, in the scope of the tracker line.
 - The reference branch `<ref>` is the branch you stand on. Pull it once, here, with `git pull --ff-only`, so that the subagents do not pull at the same time. When the pull fails, say so, and check the branch as it is.
-- Skip an issue that did not change since its last review: its last comment is the review comment of `pipe-skills:assess`, that comment holds the hash that **Hash the description** gives now, and `git log <sha>..<ref> -- <paths>`, with the SHA and the paths of that comment, finds no commit. The hash catches an edit of the description, and the last comment catches a word of the user, which the edit date cannot tell apart from the review comment. Never skip an issue that the user names.
+- Skip an issue that did not change since its last review: its last comment is the review comment of `pipe-skills:assess`, that comment names `<ref>` as its branch, `git merge-base --is-ancestor <sha> <ref>` succeeds, the comment holds the hash that **Hash the description** gives now, and `git log <sha>..<ref> -- <paths>`, with the SHA and the paths of that comment, finds no commit. A review on another branch says nothing about `<ref>`. The hash catches an edit of the description, and the last comment catches a word of the user, which the edit date cannot tell apart from the review comment. Never skip an issue that the user names.
 - State the scope in one line: the number of issues to assess, and the skipped issues with the date of their last review.
 
 ## Assess
@@ -29,15 +29,4 @@ Report the verdicts in the conversation, in the form that suits the case: one nu
 
 ## Apply
 
-For each approved row only:
-
-1. Run the change of its verdict:
-   - `current`: no change.
-   - `drifted`: rewrite the description with the proposed text and `pipe-skills:final-state`, as the Update of `pipe-skills:prd` says.
-   - `done`: **Close**.
-   - `superseded`: **Cancel**, as a duplicate when the other issue holds the same work.
-   - `obsolete`: **Cancel**.
-   - `ask`: the verdict that the user's answer gives.
-2. Then add the review comment of `pipe-skills:assess`, which the skip rule reads.
-
-A rejected row gets nothing. Report each row that you applied, with its link, and each row that failed with its reason.
+For each approved row only, run **Apply a verdict** of `pipe-skills:assess`, which ends with the review comment that the skip rule reads. A rejected row gets nothing. Report each row that you applied, with its link, and each row that failed with its reason.
