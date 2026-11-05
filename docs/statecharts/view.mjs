@@ -13,6 +13,7 @@ const where = {
   done: ["Done", "Merged and closed"],
   closed: ["Done", "Closed, the code already does it"],
   canceled: ["Canceled", "Canceled"],
+  skipped: ["Todo", "Skipped, verdict in the loop report"],
 };
 export const state = (v) => {
   if (v.sub === "stuck" && v.warned) return ["In Progress", "Warned the review is not clean"];
@@ -22,7 +23,7 @@ export const state = (v) => {
 
 const phase = {
   idea: "talk", advice: "talk", interview: "talk", draft: "specify",
-  waiting: "specify", backlog: "specify",
+  waiting: "specify", backlog: "specify", skipped: "specify",
   building: "build", replanning: "build", stuck: "build",
   reviewing: "review", gate: "review", done: "ship",
   verdicts: "sweep", closed: "sweep", canceled: "sweep",
@@ -37,7 +38,8 @@ const labels = {
   YouRunPrd: "you run /prd",
   YouGiveTheGoToFile: "you give the go, Claude files the issue",
   YouRunImplement: "you run /implement",
-  TheLoopTakesIt: "/autonomous-loop takes it",
+  TheLoopTakesIt: "/autonomous-loop takes it, /assess says current",
+  TheLoopSkipsAStaleIssue: "/autonomous-loop skips it, /assess says not current",
   TheSubagentJudgesItNotWorthIt: "the subagent judges it not worth its cost",
   YouMoveItBackToTodo: "you move it back to Todo",
   ADiscoveryChangesThePlan: "a discovery changes the plan",

@@ -33,17 +33,22 @@ YouGiveTheGoToFile ==
     /\ UNCHANGED <<mode, reviewClean, warned, shipGo, merged, isFollowup, followups, versionBumped, sweepGo, sweepChanged>>
 
 YouRunImplement ==
-    /\ sub \in {"waiting", "backlog"} /\ Move("In Progress", "building")
+    /\ sub \in {"waiting", "backlog", "skipped"} /\ Move("In Progress", "building")
     /\ mode' = "manual"
     /\ UNCHANGED <<prdGo, filed, reviewClean, warned, shipGo, merged, isFollowup, followups, versionBumped, sweepGo, sweepChanged>>
 
 TheLoopTakesIt ==
-    /\ sub = "waiting" /\ Move("In Progress", "building")
+    /\ sub \in {"waiting", "skipped"} /\ Move("In Progress", "building")
     /\ mode' = "auto"
     /\ UNCHANGED <<prdGo, filed, reviewClean, warned, shipGo, merged, isFollowup, followups, versionBumped, sweepGo, sweepChanged>>
 
+\* The loop has no user to approve a verdict, so it changes nothing on a stale issue.
+TheLoopSkipsAStaleIssue ==
+    /\ sub = "waiting" /\ sub' = "skipped" /\ UNCHANGED status
+    /\ UNCHANGED rest
+
 TheSubagentJudgesItNotWorthIt ==
-    /\ sub = "waiting" /\ Move("Backlog", "backlog")
+    /\ sub \in {"waiting", "skipped"} /\ Move("Backlog", "backlog")
     /\ UNCHANGED rest
 
 YouMoveItBackToTodo ==
@@ -101,7 +106,7 @@ Resting == IF status = "Todo" THEN "waiting" ELSE "backlog"
 noSweep == <<mode, prdGo, filed, reviewClean, warned, shipGo, merged, isFollowup, followups, versionBumped>>
 
 YouRunSweep ==
-    /\ sub \in {"waiting", "backlog"} /\ sub' = "verdicts" /\ UNCHANGED status
+    /\ sub \in {"waiting", "backlog", "skipped"} /\ sub' = "verdicts" /\ UNCHANGED status
     /\ sweepGo' = FALSE /\ sweepChanged' = FALSE
     /\ UNCHANGED noSweep
 
@@ -128,7 +133,7 @@ Finished == sub \in {"done", "closed", "canceled"} /\ UNCHANGED vars
 
 Next ==
     \/ YouAskForAdvice \/ YouAskForAnInterview \/ YouRunPrd \/ YouGiveTheGoToFile
-    \/ YouRunImplement \/ TheLoopTakesIt \/ TheSubagentJudgesItNotWorthIt \/ YouMoveItBackToTodo
+    \/ YouRunImplement \/ TheLoopTakesIt \/ TheLoopSkipsAStaleIssue \/ TheSubagentJudgesItNotWorthIt \/ YouMoveItBackToTodo
     \/ ADiscoveryChangesThePlan \/ TheIssueIsRewritten \/ TheStepsAreCommitted
     \/ TheReviewFindsWorkToFix \/ TheReviewIsClean \/ TheReviewDoesNotConverge
     \/ YouRunShipAndGiveTheGo \/ TheSubagentShipsIt
@@ -143,6 +148,7 @@ NoMergeWithoutYourGo == merged => (shipGo \/ mode = "auto")
 NoIssueBeforeYourGo == filed => prdGo
 DoneOnlyAfterMergeOrAnApprovedDoneVerdict == status = "Done" => (merged \/ (sub = "closed" /\ sweepGo))
 NoSweepChangeWithoutYourGo == sweepChanged => sweepGo
+ASkippedIssueStaysInTodo == sub = "skipped" => status = "Todo"
 FollowUpsOnlyFromShipAndNeverFromAFollowUp == followups => (merged /\ ~isFollowup)
 NoVersionBumpOrRelease == ~versionBumped
 ====
