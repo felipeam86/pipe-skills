@@ -13,7 +13,7 @@ The project `CLAUDE.md` names where it tracks work. Read the tracker file for it
 ## Read
 
 - **Read an issue**, with its comments and the date it was created, and **Find the blockers**.
-- The base of the check comes from the last review comment (below). Its SHA is the base when its branch is `<ref>` and `git merge-base --is-ancestor <sha> <ref>` succeeds. Else its date is the base, because a review on another branch, or a SHA that the repository no longer holds, says nothing about the commits of `<ref>`. Without a review comment, the base is the date the issue was created.
+- The base of the check comes from the last review comment (below). Its SHA is the base when its branch is `<ref>`, compared without the `origin/` prefix, and `git merge-base --is-ancestor <sha> <ref>` succeeds. Else its date is the base, because a review on another branch, or a SHA that the repository no longer holds, says nothing about the commits of `<ref>`. Without a review comment, the base is the date the issue was created.
 - The reference branch `<ref>` is the branch you stand on, because the user runs you from the branch that the issue builds on, which can differ from the default branch of the remote. A skill that runs you can name another one. First pull it with `git pull --ff-only`, unless the skill that runs you already did, so that it holds the new commits of its remote. When the pull fails, say so, and check the branch as it is.
 
 ## Evidence
