@@ -13,7 +13,7 @@ The plugin also has the working-style skills that the pipeline relies on: give a
 
 ## Setup
 
-Run `/pipe-skills:setup` in the project. It asks for Linear or GitHub Issues, checks what the tracker needs, fixes what it can after your go, and writes the line of the project `CLAUDE.md` that names where the work lives. Both trackers use the `gh` CLI when the repository has a GitHub remote.
+Run `/pipe-skills:setup` in the project. It asks for Linear or GitHub Issues, checks what the tracker needs, fixes what it can after your go, and writes the line of the project `CLAUDE.md` that names where the work lives. On Linear, that line names one project, or one initiative whose projects are the outcomes of the work. Both trackers use the `gh` CLI when the repository has a GitHub remote.
 
 ## Skills
 
@@ -21,12 +21,12 @@ The pipeline:
 
 | Skill | What it does | Example |
 |---|---|---|
-| `setup` | Makes a project ready: the tracker line in `CLAUDE.md`, and the team or GitHub project with its states and priority. | `/pipe-skills:setup` |
-| `prd` | Files an issue or milestone that is the specification of its own implementation, or updates one after the plan changes. | `/pipe-skills:prd file an issue for the CSV export we just discussed` |
+| `setup` | Makes a project ready: the tracker line in `CLAUDE.md`, and the team with its project or initiative, or the GitHub project, with its states and priority. | `/pipe-skills:setup` |
+| `prd` | Files an issue that is the specification of its own implementation in the outcome it serves, or a new outcome, or updates one after the plan changes. | `/pipe-skills:prd file an issue for the CSV export we just discussed` |
 | `implement` | Implements one issue in a worktree, commits each validated step, reviews with fresh reviewers until a round finds no blocker and no in-scope bug, and stops at the merge gate. | `/pipe-skills:implement ACM-42` or `/pipe-skills:implement #42` |
 | `review` | Reviews a pull request or a branch, and gives a merge verdict first. | `/pipe-skills:review 118` |
 | `ship` | Rebases, squash-merges, closes the issue, files only the follow-ups that earn an issue, and cleans up the branch and the worktree. | `/pipe-skills:ship ACM-42` |
-| `autonomous-loop` | Implements and ships the issues you name, or every issue of the project in `Todo` state, with no stop for you, from the highest priority, one fresh subagent per issue. | `/pipe-skills:autonomous-loop` |
+| `autonomous-loop` | Implements and ships the issues you name, or every issue of one project in `Todo` state, with no stop for you, from the highest priority, one fresh subagent per issue. | `/pipe-skills:autonomous-loop` |
 
 Working style:
 
