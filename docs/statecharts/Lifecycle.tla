@@ -1,9 +1,9 @@
 ---- MODULE Lifecycle ----
 \* The lifecycle of one piece of work through the pipe-skills pipeline.
 \* status is the state of the issue in the tracker, sub is where the work is inside it.
-VARIABLES status, sub, mode, prdGo, filed, reviewClean, warned, shipGo, merged, isFollowup, followups, versionBumped
-vars == <<status, sub, mode, prdGo, filed, reviewClean, warned, shipGo, merged, isFollowup, followups, versionBumped>>
-rest == <<mode, prdGo, filed, reviewClean, warned, shipGo, merged, isFollowup, followups, versionBumped>>
+VARIABLES status, sub, mode, prdGo, filed, reviewClean, warned, shipGo, merged, isFollowup, followups, versionBumped, sweepGo, sweepChanged
+vars == <<status, sub, mode, prdGo, filed, reviewClean, warned, shipGo, merged, isFollowup, followups, versionBumped, sweepGo, sweepChanged>>
+rest == <<mode, prdGo, filed, reviewClean, warned, shipGo, merged, isFollowup, followups, versionBumped, sweepGo, sweepChanged>>
 
 Init ==
     /\ status = "none" /\ sub = "idea" /\ mode = "none"
@@ -11,6 +11,7 @@ Init ==
     /\ warned = FALSE /\ shipGo = FALSE /\ merged = FALSE /\ followups = FALSE
     /\ isFollowup \in BOOLEAN
     /\ versionBumped = FALSE
+    /\ sweepGo = FALSE /\ sweepChanged = FALSE
 
 Move(st, s) == status' = st /\ sub' = s
 
@@ -29,17 +30,17 @@ YouRunPrd ==
 YouGiveTheGoToFile ==
     /\ sub = "draft" /\ Move("Todo", "waiting")
     /\ prdGo' = TRUE /\ filed' = TRUE
-    /\ UNCHANGED <<mode, reviewClean, warned, shipGo, merged, isFollowup, followups, versionBumped>>
+    /\ UNCHANGED <<mode, reviewClean, warned, shipGo, merged, isFollowup, followups, versionBumped, sweepGo, sweepChanged>>
 
 YouRunImplement ==
     /\ sub \in {"waiting", "backlog"} /\ Move("In Progress", "building")
     /\ mode' = "manual"
-    /\ UNCHANGED <<prdGo, filed, reviewClean, warned, shipGo, merged, isFollowup, followups, versionBumped>>
+    /\ UNCHANGED <<prdGo, filed, reviewClean, warned, shipGo, merged, isFollowup, followups, versionBumped, sweepGo, sweepChanged>>
 
 TheLoopTakesIt ==
     /\ sub = "waiting" /\ Move("In Progress", "building")
     /\ mode' = "auto"
-    /\ UNCHANGED <<prdGo, filed, reviewClean, warned, shipGo, merged, isFollowup, followups, versionBumped>>
+    /\ UNCHANGED <<prdGo, filed, reviewClean, warned, shipGo, merged, isFollowup, followups, versionBumped, sweepGo, sweepChanged>>
 
 TheSubagentJudgesItNotWorthIt ==
     /\ sub = "waiting" /\ Move("Backlog", "backlog")
@@ -68,7 +69,7 @@ TheReviewFindsWorkToFix ==
 TheReviewIsClean ==
     /\ sub = "reviewing" /\ Move("In Review", "gate")
     /\ reviewClean' = TRUE
-    /\ UNCHANGED <<mode, prdGo, filed, warned, shipGo, merged, isFollowup, followups, versionBumped>>
+    /\ UNCHANGED <<mode, prdGo, filed, warned, shipGo, merged, isFollowup, followups, versionBumped, sweepGo, sweepChanged>>
 
 TheReviewDoesNotConverge ==
     /\ sub = "reviewing" /\ Move("In Progress", "stuck")
@@ -79,7 +80,7 @@ Ship ==
     /\ Move("Done", "done")
     /\ merged' = TRUE
     /\ followups' \in (IF isFollowup THEN {FALSE} ELSE BOOLEAN)
-    /\ UNCHANGED <<mode, prdGo, filed, reviewClean, warned, isFollowup, versionBumped>>
+    /\ UNCHANGED <<mode, prdGo, filed, reviewClean, warned, isFollowup, versionBumped, sweepGo, sweepChanged>>
 
 YouRunShipAndGiveTheGo ==
     /\ sub = "gate" /\ mode = "manual" /\ shipGo' = TRUE /\ Ship
@@ -90,12 +91,40 @@ TheSubagentShipsIt ==
 
 ClaudeWarnsTheReviewIsNotClean ==
     /\ sub = "stuck" /\ mode = "manual" /\ ~warned /\ warned' = TRUE
-    /\ UNCHANGED <<status, sub, mode, prdGo, filed, reviewClean, shipGo, merged, isFollowup, followups, versionBumped>>
+    /\ UNCHANGED <<status, sub, mode, prdGo, filed, reviewClean, shipGo, merged, isFollowup, followups, versionBumped, sweepGo, sweepChanged>>
 
 YouGiveTheGoAnyway ==
     /\ sub = "stuck" /\ warned /\ shipGo' = TRUE /\ Ship
 
-Finished == sub = "done" /\ UNCHANGED vars
+\* sweep reports the verdicts and changes nothing in the tracker before your go.
+Resting == IF status = "Todo" THEN "waiting" ELSE "backlog"
+noSweep == <<mode, prdGo, filed, reviewClean, warned, shipGo, merged, isFollowup, followups, versionBumped>>
+
+YouRunSweep ==
+    /\ sub \in {"waiting", "backlog"} /\ sub' = "verdicts" /\ UNCHANGED status
+    /\ sweepGo' = FALSE /\ sweepChanged' = FALSE
+    /\ UNCHANGED noSweep
+
+YouApproveCurrentOrDrifted ==
+    /\ sub = "verdicts" /\ sub' = Resting /\ UNCHANGED status
+    /\ sweepGo' = TRUE /\ sweepChanged' = TRUE
+    /\ UNCHANGED noSweep
+
+YouApproveDone ==
+    /\ sub = "verdicts" /\ Move("Done", "closed")
+    /\ sweepGo' = TRUE /\ sweepChanged' = TRUE
+    /\ UNCHANGED noSweep
+
+YouApproveSupersededOrObsolete ==
+    /\ sub = "verdicts" /\ Move("Canceled", "canceled")
+    /\ sweepGo' = TRUE /\ sweepChanged' = TRUE
+    /\ UNCHANGED noSweep
+
+YouRejectTheVerdict ==
+    /\ sub = "verdicts" /\ sub' = Resting /\ UNCHANGED status
+    /\ UNCHANGED <<sweepGo, sweepChanged>> /\ UNCHANGED noSweep
+
+Finished == sub \in {"done", "closed", "canceled"} /\ UNCHANGED vars
 
 Next ==
     \/ YouAskForAdvice \/ YouAskForAnInterview \/ YouRunPrd \/ YouGiveTheGoToFile
@@ -103,14 +132,17 @@ Next ==
     \/ ADiscoveryChangesThePlan \/ TheIssueIsRewritten \/ TheStepsAreCommitted
     \/ TheReviewFindsWorkToFix \/ TheReviewIsClean \/ TheReviewDoesNotConverge
     \/ YouRunShipAndGiveTheGo \/ TheSubagentShipsIt
-    \/ ClaudeWarnsTheReviewIsNotClean \/ YouGiveTheGoAnyway \/ Finished
+    \/ ClaudeWarnsTheReviewIsNotClean \/ YouGiveTheGoAnyway
+    \/ YouRunSweep \/ YouApproveCurrentOrDrifted \/ YouApproveDone \/ YouApproveSupersededOrObsolete \/ YouRejectTheVerdict
+    \/ Finished
 
 Spec == Init /\ [][Next]_vars
 
 NoMergeBeforeCleanReviewUnlessYouSawAWarningOrRanTheLoop == merged => (reviewClean \/ warned \/ mode = "auto")
 NoMergeWithoutYourGo == merged => (shipGo \/ mode = "auto")
 NoIssueBeforeYourGo == filed => prdGo
-DoneOnlyAfterMerge == status = "Done" => merged
+DoneOnlyAfterMergeOrAnApprovedDoneVerdict == status = "Done" => (merged \/ (sub = "closed" /\ sweepGo))
+NoSweepChangeWithoutYourGo == sweepChanged => sweepGo
 FollowUpsOnlyFromShipAndNeverFromAFollowUp == followups => (merged /\ ~isFollowup)
 NoVersionBumpOrRelease == ~versionBumped
 ====
