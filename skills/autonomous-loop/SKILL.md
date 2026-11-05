@@ -1,6 +1,6 @@
 ---
 name: autonomous-loop
-description: Implement and ship Linear or GitHub issues with no stop for the user, one at a time, each in a fresh subagent and its own worktree. Takes the issues the user names, or else every Todo issue of the project, from the highest priority and the oldest. Use only when the user runs /pipe-skills:autonomous-loop or says "implement the whole Todo queue on your own" or "implement and ship ABC-123 on your own" or "implement and ship #42 on your own".
+description: Implement and ship Linear or GitHub issues with no stop for the user, one at a time, each in a fresh subagent and its own worktree. Takes the issues the user names, or else every Todo issue of one project, from the highest priority and the oldest. Use only when the user runs /pipe-skills:autonomous-loop or says "implement the whole Todo queue on your own" or "implement and ship ABC-123 on your own" or "implement and ship #42 on your own".
 disable-model-invocation: true
 ---
 
@@ -10,7 +10,7 @@ You are the orchestrator. You do not read, write, or review code. The project `C
 
 ## Queue
 
-- The issues the user names. Else the queue of the project that the argument or the project `CLAUDE.md` names: every `Todo` issue, in the order of the tracker file.
+- The issues the user names. Else the queue of the project that the argument or the project `CLAUDE.md` names: every `Todo` issue, in the order of the tracker file. When the tracker line names a Linear initiative, the argument names the project; when it names none, list the outcomes and stop before you start.
 - Freeze the queue at the start. An issue created during the run is often a follow-up that the user has not read yet.
 - Read the target branch (the branch the user is on) and the repository root.
 
