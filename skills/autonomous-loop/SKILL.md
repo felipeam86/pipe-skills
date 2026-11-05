@@ -31,7 +31,7 @@ A result other than `shipped` does not stop the loop. When a guard or a tool sto
 
 > Implement and ship the Linear issue `<ABC-123>` of `<root>`, with no stop for the user. The target branch is `<target>`. Read `${CLAUDE_PLUGIN_ROOT}/skills/implement/SKILL.md` and `${CLAUDE_PLUGIN_ROOT}/skills/ship/SKILL.md`, and follow them with these changes:
 >
-> - First decide whether the issue is worth its cost. When it is not, change nothing, explain why in an issue comment, and report `skipped: not worth it`.
+> - First decide whether the issue is worth its cost. When it is not, change no file, explain why in an issue comment, move the issue to `Backlog` so that no later loop takes it again, and report `skipped: not worth it`.
 > - You already run in a worktree. Do not call EnterWorktree: run `git fetch origin` and create the branch that `gitBranchName` names from `origin/<target>`.
 > - Never ask the user. When the issue leaves a choice open, take the option that changes the least and is easiest to reverse, and record it in an issue comment. Stop only when the issue does not say what to build.
 > - Fix every blocker and every in-scope finding in the branch, and file a new issue only by step 4 of the ship skill.

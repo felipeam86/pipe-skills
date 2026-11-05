@@ -42,6 +42,84 @@ Working style:
 | `final-state` | Edits a document, an issue, or a comment so that it states only the settled decision, removes traces of previous ones, and keeps the rationale. | `/pipe-skills:final-state docs/design.md` |
 | `promote-rule` | Turns a correction you just made into a durable rule, at the level it governs. | `/pipe-skills:promote-rule` |
 
+## How the skills fit together
+
+One piece of work moves through the Linear states of its issue. Each arrow names who acts, and the skill when one runs. `promote-rule` is not on the chart, because it can run at any time, when you correct Claude. The model behind the chart, and the rules that TLC checks on it, are in `docs/statecharts`.
+
+```mermaid
+---
+title: "One piece of work, from idea to merge"
+---
+stateDiagram-v2
+  state "No issue yet" as s0 {
+    s1: Idea
+    s2: Getting an opinion
+    s3: Draft shown to you
+    s4: Being interviewed
+  }
+  state "Todo" as s5 {
+    s6: Waiting
+  }
+  state "In Progress" as s7 {
+    s8: Building in steps
+    s9: Rewriting the plan
+    s10: Under review
+    s11: Stopped, reported to you
+    s12: Warned the review is not clean
+  }
+  state "Backlog" as s13 {
+    s14: Judged not worth it
+  }
+  state "In Review" as s15 {
+    s16: At the merge gate
+  }
+  state "Done" as s17 {
+    s18: Merged and closed
+  }
+  [*] --> s1
+  s1 --> s2: you ask for an opinion (/advise)
+  s1 --> s3: you run /prd
+  s1 --> s4: you ask for an interview (/interview)
+  s2 --> s3: you run /prd
+  s2 --> s4: you ask for an interview (/interview)
+  s3 --> s6: you give the go, Claude files the issue
+  s4 --> s3: you run /prd
+  s6 --> s8: /autonomous-loop takes it or you run /implement
+  s6 --> s14: the subagent judges it not worth its cost
+  s8 --> s9: a discovery changes the plan
+  s8 --> s10: the steps are committed, a fresh reviewer starts
+  s14 --> s6: you move it back to Todo
+  s14 --> s8: you run /implement
+  s9 --> s8: the issue is rewritten (/final-state)
+  s10 --> s8: the review finds a blocker or an in-scope bug
+  s10 --> s16: the review is clean
+  s10 --> s11: a blocker comes back, or 10 rounds pass
+  s16 --> s18: the subagent ships it [in /autonomous-loop] or you run /ship and give the go
+  s11 --> s18: the subagent ships it [in /autonomous-loop]
+  s11 --> s12: you run /ship
+  s12 --> s18: you give the go anyway
+  classDef purple fill:#f1e8ff,stroke:#7c4dcc,color:#3d2370
+  classDef blue fill:#e6f0ff,stroke:#2f6fd6,color:#173a73
+  classDef orange fill:#fff0e0,stroke:#e07a10,color:#7a3f05
+  classDef yellow fill:#fff8d6,stroke:#c9a400,color:#5c4b00
+  classDef teal fill:#def7f3,stroke:#1a9e8f,color:#0b4f47
+  class s1 purple
+  class s2 purple
+  class s3 blue
+  class s4 purple
+  class s6 blue
+  class s8 orange
+  class s9 orange
+  class s10 yellow
+  class s11 orange
+  class s12 orange
+  class s14 blue
+  class s16 yellow
+  class s18 teal
+```
+
+Colors: purple = talk, blue = specify, orange = build, yellow = review, teal = ship.
+
 ## Review bar
 
 A reviewer finds more edge cases in each round. The pipeline ends the loop when a review finds no blocker and no in-scope bug, not when it finds nothing, and it stops after 10 rounds or when a blocker comes back after its fix. A re-review checks the earlier findings and reports only new ones. The reviewer classes each finding as a blocker, in scope (same root cause as the issue, or in the code it touches), or out of scope (a different root cause). Claude fixes the blockers and the in-scope findings in the same branch, and keeps the out-of-scope findings for `ship`, which files a follow-up issue only for a reproduced bug or a feature of high value with a new root cause.

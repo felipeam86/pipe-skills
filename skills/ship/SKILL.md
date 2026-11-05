@@ -8,6 +8,8 @@ disable-model-invocation: true
 
 Use the tools of the Linear MCP server; load them with ToolSearch first. Read the branch and the target branch from the user's argument, else from the merge-gate comment on the issue, else from `gh pr view`.
 
+Read the final verdict in the merge-gate comment. When it is not ready, or no merge-gate comment exists, say so in the plan and do not merge without a go from the user.
+
 Run the merge, the cleanup and the checkout from the main checkout, not from the worktree, because git refuses a branch that another worktree holds.
 
 Report the state and the plan first. Wait for a go before a step that can lose work: an unpushed commit, an uncommitted change, or a rebase. Then run the steps that still apply:
