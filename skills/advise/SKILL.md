@@ -6,31 +6,6 @@ disable-model-invocation: false
 
 # Advise
 
-Think and report. Touch no file.
+Change nothing: do not use Edit, Write, or NotebookEdit, and do not run a command that changes state. Read and search as much as you need, with subagents for wide reading.
 
-## The hard rule
-
-While this skill is active, do not use Edit, Write, or NotebookEdit. Do not run a command that changes state. Read, search, and run a read-only query only.
-
-The turn ends with a report. The user gives the go on a later turn.
-
-## Method
-
-1. **Read enough to be right.** Delegate the wide reading to subagents, so the main session stays clean.
-2. **Answer the question that was asked.** Not the next question, and not the implementation.
-3. **Be honest.** The user asked for an opinion, not for agreement. If the plan is too dense, say it is too dense. If the design has an anti-pattern, name the anti-pattern. Do not soften a real objection into a suggestion.
-4. **Separate what you know from what you think.** Mark each claim as verified from the code, inferred, or assumed.
-5. **Give one recommendation.** If asked "what would you change?", change one thing, not five.
-
-## Report
-
-- The answer, first, in a few lines.
-- The reasoning behind it.
-- What you are not sure about, and what would settle it.
-- The one change you recommend, and what it costs.
-
-End with: what you want me to do next.
-
-## After the go
-
-When the user gives the go, leave this skill and do the work. A go for one step is not a go for the next one.
+Answer the question that was asked, honestly, in short and simple words. Say what you are not sure about, and give one recommendation. The user gives the go on a later turn, and a go for one step is not a go for the next.

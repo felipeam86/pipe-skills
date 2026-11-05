@@ -18,7 +18,7 @@ The plugin also has the working-style skills that the pipeline relies on: give a
 - One line in the project `CLAUDE.md` that names where the work lives:
 
   ```
-  - Track work in the Linear project **Acme Web** of the team `ACM`, never in GitHub issues.
+  - Track work in the Linear project **Acme Web** of the team `ACM`.
   ```
 
 ## Skills
@@ -28,11 +28,10 @@ The pipeline:
 | Skill | What it does | Example |
 |---|---|---|
 | `prd` | Files a Linear issue or milestone that is the specification of its own implementation, or updates one after the plan changes. | `/pipe-skills:prd file an issue for the CSV export we just discussed` |
-| `implement` | Implements one issue in a worktree, commits each validated step, reviews with fresh reviewers (at most three rounds), and stops at the merge gate. | `/pipe-skills:implement ACM-42` |
+| `implement` | Implements one issue in a worktree, commits each validated step, reviews with fresh reviewers until a round finds no blocker and no in-scope bug, and stops at the merge gate. | `/pipe-skills:implement ACM-42` |
 | `review` | Reviews a pull request or a branch, and gives a merge verdict first. | `/pipe-skills:review 118` |
 | `ship` | Rebases, squash-merges, closes the issue, files only the follow-ups that earn an issue, and cleans up the branch and the worktree. | `/pipe-skills:ship ACM-42` |
-| `autonomous-implement` | Implements and ships one issue with no stop for the user (at most five review rounds), and records each decision that it makes for you as an issue comment. | `/pipe-skills:autonomous-implement ACM-42` |
-| `autonomous-loop` | Implements and ships every `Todo` issue of a project, from the highest priority, one fresh subagent per issue. | `/pipe-skills:autonomous-loop` |
+| `autonomous-loop` | Implements and ships the issues you name, or every issue of the project in `Todo` state, with no stop for you, from the highest priority, one fresh subagent per issue. | `/pipe-skills:autonomous-loop` |
 
 Working style:
 
@@ -40,16 +39,16 @@ Working style:
 |---|---|---|
 | `advise` | Gives an opinion or a plan, and changes no file. | `/pipe-skills:advise is this cache layer worth it?` |
 | `interview` | Interviews you in depth to write a specification. | `/pipe-skills:interview the onboarding redesign` |
-| `final-state` | Edits a document, an issue, or a comment so that it states only the settled decision, and keeps the rationale. | `/pipe-skills:final-state docs/design.md` |
+| `final-state` | Edits a document, an issue, or a comment so that it states only the settled decision, removes traces of previous ones, and keeps the rationale. | `/pipe-skills:final-state docs/design.md` |
 | `promote-rule` | Turns a correction you just made into a durable rule, at the level it governs. | `/pipe-skills:promote-rule` |
 
 ## Review bar
 
-A reviewer finds more edge cases in each round. The pipeline ends the loop when a review finds no real bug, not when it finds nothing. Claude fixes every blocker, every real bug, and every feature of high value in the same branch. It drops the rest with a one-line reason, and it files a follow-up issue only for a reproduced bug or a feature of high value that has a new root cause.
+A reviewer finds more edge cases in each round. The pipeline ends the loop when a review finds no blocker and no in-scope bug, not when it finds nothing, and it stops after 10 rounds or when a blocker comes back after its fix. A re-review checks the earlier findings and reports only new ones. The reviewer classes each finding as a blocker, in scope (same root cause as the issue, or in the code it touches), or out of scope (a different root cause). Claude fixes the blockers and the in-scope findings in the same branch, and keeps the out-of-scope findings for `ship`, which files a follow-up issue only for a reproduced bug or a feature of high value with a new root cause.
 
 ## Credits
 
 - `interview` is the [interview prompt](https://x.com/trq212/status/2005315275026260309) by Thariq Shihipar.
-- Many of the ideas behind this plugin come from [mattpocock/skills](https://github.com/mattpocock/skills) by Matt Pocock and [pstack](https://github.com/cursor/plugins/tree/main/pstack) by Lauren Tan.
+- Many of the ideas behind this plugin are hevily inspired by [Matt Pocock](https://github.com/mattpocock/skills) and [Lauren Tan](https://github.com/cursor/plugins/tree/main/pstack).
 
 The plugin is under the MIT License, see `LICENSE`.

@@ -1,69 +1,45 @@
 ---
 name: autonomous-loop
-description: Implement and ship every `Todo` issue of a Linear project, one at a time, from the highest priority to the lowest, and from the oldest to the newest within one priority. The orchestrator keeps a clean context: each issue runs in its own subagent, in its own worktree, through `autonomous-implement`. Use only when the user runs /autonomous-loop or says "implement the whole Todo queue on your own".
+description: Implement and ship Linear issues with no stop for the user, one at a time, each in a fresh subagent and its own worktree. Takes the issues the user names, or else every Todo issue of the project, from the highest priority and the oldest. Use only when the user runs /pipe-skills:autonomous-loop or says "implement the whole Todo queue on your own" or "implement and ship ABC-123 on your own".
 disable-model-invocation: true
 ---
 
-# Implement the Todo queue of a Linear project
+# Implement and ship a queue of Linear issues
 
-You are the orchestrator. You do not read code, write code, or review it. You hold the queue, start one subagent per issue, and keep a short ledger of the results. Every issue runs through `autonomous-implement`, whose rules apply as written.
+You are the orchestrator. You do not read, write, or review code. Use the tools of the Linear MCP server; load them with ToolSearch first.
 
-Use the tools of the Linear MCP server. Load them with ToolSearch first.
+## Queue
 
-## 1. Build the queue
+- The issues the user names. Else, with `list_issues`, every `Todo` issue of the project that the argument or the project `CLAUDE.md` names: `Urgent`, `High`, `Medium`, `Low`, then `No priority` (Linear stores it as 0), and the oldest first within one priority.
+- Freeze the queue at the start. An issue created during the run is often a follow-up that the user has not read yet.
+- Read the target branch (the branch the user is on) and the repository root.
 
-- Linear team and project: the argument of the user, or else the project `CLAUDE.md`. If neither names them, stop and ask.
-- Target branch: the branch the user is on now. Read it once, and give it to every subagent.
-- Repository root: `git rev-parse --show-toplevel`.
-- Skill file: the absolute path of `../autonomous-implement/SKILL.md`, relative to the base directory of this skill. A subagent does not know where the plugin lives, so give it this path.
-- Record the start time of the run.
-- `list_issues` for the project in the state `Todo`, every page. Sort by priority, highest first: `Urgent`, `High`, `Medium`, `Low`, and `No priority` last. Linear stores them as 1, 2, 3, 4 and 0, so 0 does not sort first. Within one priority, sort by `createdAt`, oldest first. This list, frozen now, is the queue. An issue created after the start of the run is not in it: it is often a deferred finding that a subagent filed, and the user has not read it yet.
+State the queue in one line per issue, then start. The call of this skill authorizes, for the issues in the queue only, to push, merge, close the issue, and delete the branch and the worktree. It does not authorize a version bump, a tag, or a release.
 
-State the queue to the user in one line per issue, then start. Do not wait for a go.
+## Run
 
-## 2. Run one issue at a time
+One issue at a time, because each one merges into the target branch before the next starts. For each issue:
 
-Run the issues in sequence, never in parallel: each one merges into the target branch, and the next one must start from that merge.
+1. Skip it when it is no longer `Todo`, or when an open issue blocks it.
+2. Start a fresh subagent with the Agent tool: `isolation: "worktree"`, the model of this session, and the prompt below. Do not fork, so that the subagent starts clean.
+3. End the turn and wait for its notification. When it ends without its report, ask it for the report with SendMessage.
+4. Record its report, and remove its worktree when the harness did not. A worktree that the Agent tool made is locked: remove it with `git worktree remove -f -f`.
 
-For each issue in the queue:
+A result other than `shipped` does not stop the loop. When a guard or a tool stops a subagent, start one more subagent for the same issue. When the same failure stops three issues in a row, the failure is in the environment: end the loop. At the end, take the skipped issues once more when their blockers are now `Done`.
 
-1. **Check it again.** `get_issue`. Skip it when its state is no longer `Todo`. Skip it for now when an issue that blocks it is not `Done`.
-2. **Start a fresh subagent.** Use the Agent tool with `subagent_type: "general-purpose"` and `isolation: "worktree"`. Never use `fork`: a fork inherits this context, and the issue must start clean. Give it the prompt below and nothing else.
-3. **Wait for its notification.** End the turn. Do not poll, and do not sleep.
-4. **Record the result** in the ledger: the issue, the result, the pull request, the merge commit, the decisions, the issues filed. Keep only the short report of the subagent.
-5. **Remove its worktree** with `git worktree remove <path>` and `git worktree prune`, when the harness did not remove it.
+### Subagent prompt
 
-After the last issue, take the skipped blocked issues once more, in the same order, when their blockers are now `Done`.
-
-### Prompt for the subagent
-
-> Implement and ship the Linear issue `<ABC-123>` of the repository `<root>`. Read `<skill file>` and follow it. The Skill tool cannot load it, so read the file. The target branch is `<target>`.
+> Implement and ship the Linear issue `<ABC-123>` of `<root>`, with no stop for the user. The target branch is `<target>`. Read `${CLAUDE_PLUGIN_ROOT}/skills/implement/SKILL.md` and `${CLAUDE_PLUGIN_ROOT}/skills/ship/SKILL.md`, and follow them with these changes:
 >
-> A follow-up issue is a cost: the user must read it, and the next run of the loop implements it. Fix every real bug and every feature of high value that a review finds in this branch, and file a new issue only by the three rules of `ship` step 6.
+> - First decide whether the issue is worth its cost. When it is not, change nothing, explain why in an issue comment, and report `skipped: not worth it`.
+> - You already run in a worktree. Do not call EnterWorktree: run `git fetch origin` and create the branch that `gitBranchName` names from `origin/<target>`.
+> - Never ask the user. When the issue leaves a choice open, take the option that changes the least and is easiest to reverse, and record it in an issue comment. Stop only when the issue does not say what to build.
+> - Fix every blocker and every in-scope finding in the branch, and file a new issue only by step 4 of the ship skill.
+> - Ship without waiting for a go. Rebase when the branch holds only your commits. Mark the pull request ready, watch its checks with one background watcher, and fix a failed check at most three times. Do not remove your worktree, and do not check out or pull the target branch in `<root>`.
+> - When the environment fails (a login, a registry, a credential), stop and name the command that fixes it.
 >
-> You run in an isolated worktree that the harness made for you. It replaces the worktree of `implement` step 1: do not call EnterWorktree. In this worktree, run `git fetch origin` and create the branch that `gitBranchName` names from `origin/<target>`.
->
-> In `ship`, skip step 8 and step 9. Do not remove your worktree, and do not check out or pull the target branch in `<root>`: the user works there. The orchestrator removes your worktree.
->
-> Do not report to the user. End with this report and nothing more, in short plain sentences, at most ten lines: result (`shipped`, `stopped at merge gate`, `stopped before work`, or `stopped by guard`), the reason when it stopped, the pull request URL, the merge commit, the decisions you made with their comment links, the Linear issues you filed or added a case to, and the path of your worktree.
+> End with this report and nothing more, at most ten lines: the result (`shipped`, `skipped: not worth it`, `stopped at merge gate`, `stopped before work`, or `stopped by guard`), the reason when it did not ship, the pull request, the merge commit, the decisions you recorded, the issues you filed or added a case to, and your worktree path.
 
-## 3. Handle each result and continue
+## Report
 
-A result that is not `shipped` belongs to its issue, not to the loop. Record it and go to the next issue.
-
-- **Stopped at the merge gate, or before the work.** The issue stays as the subagent left it, with its reason in a comment. The next issue starts from the target branch without it.
-- **Stopped by a guard**, or a tool failed: the repository, `gh`, the Linear MCP, or the CI. Start one new subagent for the same issue. When the second one stops for the same reason, record it and go to the next issue.
-- **The same tool failure stops three issues in sequence.** The failure is in the environment, not in the issues, and every issue that follows meets it too. This is the one case where the loop ends before the queue is empty.
-
-The loop ends when the queue is empty.
-
-## 4. Report
-
-One report at the end. Give:
-
-- The count first: shipped, stopped, skipped.
-- One line per issue, in queue order: the identifier, the result, the pull request, the merge commit.
-- The decisions that the subagents made in place of the user, with the links to their comments.
-- The issues that the subagents filed or added a case to, which the next run will pick up when they are in `Todo`.
-- For each issue that did not ship: the reason, and the repair you propose. When the loop ended before the queue was empty, say which failure ended it.
-- The local target branch in `<root>` is behind its remote. Pull it only when it holds no change of the user; otherwise say that it is behind.
+The counts first: shipped, skipped, stopped. Then one line per issue with its result, pull request and merge commit; the decisions the subagents recorded; the issues they filed; and for each issue that did not ship, the reason and the repair you propose. Say whether the local target branch in `<root>` is behind its remote, and pull it only when it holds no change of the user.

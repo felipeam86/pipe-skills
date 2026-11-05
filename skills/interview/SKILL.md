@@ -1,8 +1,7 @@
 ---
 name: interview
 argument-hint: [instructions]
-description: Interview user in-depth to create a detailed spec
-allowed-tools: AskUserQuestion, Write
+description: Interview the user in depth to write a detailed spec
 ---
 
-Follow the user instructions and interview me in detail using the AskUserQuestionTool about literally anything. but make sure the questions are not obvious. be very in-depth and continue interviewing me continually until it's complete. <instructions>$ARGUMENTS</instructions>
+Follow the user instructions and interview me in detail with the AskUserQuestion tool about literally anything, but make sure the questions are not obvious. Read the code and the data first, so that each question rests on facts. Continue until the spec is complete, then state the spec back to me and stop. <instructions>$ARGUMENTS</instructions>
