@@ -13,5 +13,5 @@ The tracker file `trackers/linear.md` owns the tracker line, the state names and
 ## Setup
 
 - **Create the project.** `save_project` with the project name and the team. Load its schema with ToolSearch first, because the tools of the server change.
-- **Create the initiative.** `save_initiative` with the initiative name. Load its schema with ToolSearch first.
+- **Create the initiative.** Ask the user for its parent initiative, if it has one. `save_initiative` with the initiative name, and `parentInitiatives` with the parent. Load its schema with ToolSearch first.
 - **Add the team to a project of the initiative.** `save_project` with the `id` of the project and `addTeams` with the team.

@@ -1,6 +1,6 @@
 ---
 name: prd
-description: Create an outcome (a milestone, or a Linear project of an initiative), or an issue that is the specification for its own implementation, or update one after the plan changes, in Linear or GitHub Issues. For a project whose CLAUDE.md names where it tracks work. Use when the user says "create an issue for this effort", "push this as an issue", "update issue ABC-123", "update issue #42", "track this in an issue", or runs /pipe-skills:prd in such a project.
+description: Create an outcome, or an issue that is the specification for its own implementation, or update one after the plan changes, in Linear or GitHub Issues. For a project whose CLAUDE.md names where it tracks work. Use when the user says "create an issue for this effort", "push this as an issue", "update issue ABC-123", "update issue #42", "track this in an issue", or runs /pipe-skills:prd in such a project.
 disable-model-invocation: false
 ---
 

@@ -10,7 +10,7 @@ You are the orchestrator. You do not read, write, or review code. The project `C
 
 ## Queue
 
-- The issues the user names. Else the queue of the project that the argument or the project `CLAUDE.md` names: every `Todo` issue, in the order of the tracker file. When the tracker line names a Linear initiative, the argument names the project; when it names none, list the outcomes and stop before you start.
+- The issues the user names. Else the queue of the project that the argument or the project `CLAUDE.md` names: every `Todo` issue, in the order of the tracker file. When the queue of the tracker file needs a project that the argument does not name, list the outcomes and stop before you start.
 - Freeze the queue at the start. An issue created during the run is often a follow-up that the user has not read yet.
 - Read the target branch (the branch the user is on) and the repository root.
 
