@@ -7,7 +7,7 @@ The plugin also has the working-style skills that the pipeline relies on: give a
 ## Install
 
 ```
-/plugin marketplace add <owner>/pipe-skills
+/plugin marketplace add felipeam86/pipe-skills
 /plugin install pipe-skills@pipe-skills
 ```
 
