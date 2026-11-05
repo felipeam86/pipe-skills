@@ -31,7 +31,7 @@ A result other than `shipped` does not stop the loop. When a guard or a tool sto
 
 > Implement and ship the issue `<identifier>` of `<root>`, with no stop for the user. The target branch is `<target>`. Read `${CLAUDE_PLUGIN_ROOT}/skills/implement/SKILL.md` and `${CLAUDE_PLUGIN_ROOT}/skills/ship/SKILL.md`, and the tracker file `<tracker file>`, and follow them with these changes:
 >
-> - Before anything else, assess the issue as `${CLAUDE_PLUGIN_ROOT}/skills/assess/SKILL.md` says. When the verdict is not `current`, change no file, post no comment, keep the state of the issue, and report `skipped: verdict <verdict>` with the reason and **The code says** of the assessment.
+> - Before anything else, assess the issue as `${CLAUDE_PLUGIN_ROOT}/skills/assess/SKILL.md` says, with `origin/<target>` as the reference branch after `git fetch origin`, because your worktree is on a new branch and you do not pull in `<root>`. When the verdict is not `current`, change no file, post no comment, keep the state of the issue, and report `skipped: verdict <verdict>` with the reason and **The code says** of the assessment.
 > - Then decide whether the issue is worth its cost. When it is not, change no file, explain why in an issue comment, set the issue to `Backlog` so that no later loop takes it again, and report `skipped: not worth it`.
 > - You already run in a worktree. Do not call EnterWorktree: name the branch as the tracker file says, and check it out as the implement skill says.
 > - Never ask the user. When the issue leaves a choice open, take the option that changes the least and is easiest to reverse, and record it in an issue comment. Stop only when the issue does not say what to build.

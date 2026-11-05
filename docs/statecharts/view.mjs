@@ -52,7 +52,7 @@ const labels = {
   TheSubagentShipsIt: "the subagent ships it [in /autonomous-loop]",
   ClaudeWarnsTheReviewIsNotClean: "you run /ship",
   YouGiveTheGoAnyway: "you give the go anyway",
-  YouRunSweep: "you run /sweep, /assess judges it",
+  YouRunAssessOrSweep: "you run /assess or /sweep",
   YouApproveCurrentOrDrifted: "you approve current or drifted",
   YouApproveDone: "you approve done",
   YouApproveSupersededOrObsolete: "you approve superseded or obsolete",

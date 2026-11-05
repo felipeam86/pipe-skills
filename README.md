@@ -23,7 +23,7 @@ The pipeline:
 |---|---|---|
 | `setup` | Makes a project ready: the tracker line in `CLAUDE.md`, and the team with its project or initiative, or the GitHub project, with its states and priority. | `/pipe-skills:setup` |
 | `prd` | Files an issue that is the specification of its own implementation in the outcome it serves, or a new outcome, or updates one after the plan changes. | `/pipe-skills:prd file an issue for the CSV export we just discussed` |
-| `assess` | Judges whether one `Backlog` or `Todo` issue still matches the code and its goal, and gives a verdict with the evidence. Changes nothing. | `/pipe-skills:assess #42` |
+| `assess` | Judges whether one `Backlog` or `Todo` issue still matches the code and its goal, and gives a verdict with the evidence. It changes nothing: after your go, the session applies the verdict and posts the review comment. | `/pipe-skills:assess #42` |
 | `implement` | Implements one issue in a worktree, commits each validated step, reviews with fresh reviewers until a round finds no blocker and no in-scope bug, and stops at the merge gate. | `/pipe-skills:implement ACM-42` or `/pipe-skills:implement #42` |
 | `review` | Reviews a pull request or a branch, and gives a merge verdict first. | `/pipe-skills:review 118` |
 | `ship` | Rebases, squash-merges, closes the issue, files only the follow-ups that earn an issue, and cleans up the branch and the worktree. | `/pipe-skills:ship ACM-42` |
@@ -41,7 +41,7 @@ Working style:
 
 ## How the skills fit together
 
-One piece of work moves through the states of its issue in the tracker. Each arrow names who acts, and the skill when one runs. `setup` is not on the chart, because it runs once before the first issue, and `promote-rule` is not on it, because it can run at any time, when you correct Claude. `assess` alone is not on it, because it changes nothing. The model behind the chart, and the rules that TLC checks on it, are in `docs/statecharts`.
+One piece of work moves through the states of its issue in the tracker. Each arrow names who acts, and the skill when one runs. `setup` is not on the chart, because it runs once before the first issue, and `promote-rule` is not on it, because it can run at any time, when you correct Claude. The model behind the chart, and the rules that TLC checks on it, are in `docs/statecharts`.
 
 ```mermaid
 ---
@@ -91,15 +91,15 @@ stateDiagram-v2
   s6 --> s10: /autonomous-loop takes it, /assess says current or you run /implement
   s6 --> s16: the subagent judges it not worth its cost
   s6 --> s7: /autonomous-loop skips it, /assess says not current
-  s6 --> s8: you run /sweep, /assess judges it
+  s6 --> s8: you run /assess or /sweep
   s10 --> s11: a discovery changes the plan
   s10 --> s12: the steps are committed, a fresh reviewer starts
   s16 --> s6: you move it back to Todo
   s16 --> s10: you run /implement
-  s16 --> s17: you run /sweep, /assess judges it
+  s16 --> s17: you run /assess or /sweep
   s7 --> s10: /autonomous-loop takes it, /assess says current or you run /implement
   s7 --> s16: the subagent judges it not worth its cost
-  s7 --> s8: you run /sweep, /assess judges it
+  s7 --> s8: you run /assess or /sweep
   s8 --> s6: you reject it or you approve current or drifted
   s8 --> s19: you approve superseded or obsolete
   s8 --> s21: you approve done
