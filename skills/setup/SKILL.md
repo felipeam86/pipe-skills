@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 Make the project ready for `pipe-skills:prd`, `pipe-skills:implement`, `pipe-skills:ship` and `pipe-skills:autonomous-loop`, and change nothing else. Running it again on a ready project changes nothing.
 
-1. Read the `CLAUDE.md` at the root of the repository. When it names a tracker, show the tracker line and ask the user to keep it or to change the scope; on keep, take that tracker, team, and project or initiative. On change, or when it names no tracker, ask the user: Linear or GitHub Issues, and which team and project, or team and initiative, or which GitHub project and owner. Offer the projects or initiatives that exist, and a new one as the last option.
+1. Read the `CLAUDE.md` at the root of the repository. When it names a tracker, show the tracker line and ask the user to keep it or to change the scope; on keep, take that tracker, team, and project or initiative. On change, or when it names no tracker, ask the user: Linear or GitHub Issues, and which team and project, or team and initiative, or which GitHub project and owner. Offer the projects or initiatives that exist, and a new one as the last option. On change, check the new scope as if no map line exists, so that each state is mapped again.
 2. Read the tracker file, `${CLAUDE_PLUGIN_ROOT}/trackers/linear.md` or `${CLAUDE_PLUGIN_ROOT}/trackers/github.md`, and its setup file, `${CLAUDE_SKILL_DIR}/linear.md` or `${CLAUDE_SKILL_DIR}/github.md`. Check each item of the **Requirements** of the setup file, read-only.
 3. Report one line per requirement: ready, or missing with the fix. Name what the user must do by hand, and what you can do.
 4. After the user's go, run the fixes of the **Setup** section of the setup file, then check the requirements again.
