@@ -27,4 +27,5 @@ Use the tools of the Linear MCP server; load them with ToolSearch first. The sta
 - **Link a follow-up.** `relatedTo: ["ACM-42"]` on the new issue, and the `project` of the closed issue, which `get_issue` gives.
 - **Find the blockers.** The `relations.blockedBy` of `get_issue`, which holds no state: read each blocker with `get_issue`. A blocker is open when its state is not `Done`, `Canceled`, or `Duplicate`.
 - **List the queue.** `list_issues` with `project` (in the initiative form, the outcome that the user names), `state: "Todo"`, `limit: 250`, and `fields` that hold `priority` and `createdAt`. Leave out a parent issue that has children: its children are the work. Order by priority: `Urgent`, `High`, `Medium`, `Low`, then `No priority` (0), and the oldest first within one priority.
+- **List the backlog.** `list_issues` with `project`, `limit: 250`, once with `state: "Backlog"` and once with `state: "Todo"`. In the initiative form, do this for each outcome of **List the outcomes**.
 - **Close.** Set the state `Done`.
