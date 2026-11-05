@@ -1,6 +1,6 @@
 # Linear tracker
 
-The project `CLAUDE.md` names the team and the project: `- Track work in the Linear project **Acme Web** of the team `ACM`.` Use the tools of the Linear MCP server; load them with ToolSearch first. The state parameter of `save_issue` is `state`, never `status`.
+The project `CLAUDE.md` names the team and the project: `- Track work in the Linear project **Acme Web** of the team `ACM`.` Use the tools of the Linear MCP server; load them with ToolSearch first. The state parameter of `save_issue` is `state`, never `status`. When no Linear MCP tool is found, or the team has no state that a step needs, stop and name `pipe-skills:setup`.
 
 ## Identifier
 

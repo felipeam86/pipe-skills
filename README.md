@@ -13,19 +13,7 @@ The plugin also has the working-style skills that the pipeline relies on: give a
 
 ## Setup
 
-One line in the project `CLAUDE.md` names where the work lives. The tracker file of each tracker holds what the skills do with it.
-
-- Linear, in `trackers/linear.md`: the [Linear MCP server](https://linear.app/docs/mcp), connected and authenticated with `claude mcp add --transport http linear-server https://mcp.linear.app/mcp`, and the `gh` CLI when the repository has a GitHub remote.
-
-  ```
-  - Track work in the Linear project **Acme Web** of the team `ACM`.
-  ```
-
-- GitHub Issues, in `trackers/github.md`: the `gh` CLI with the `project` scope (`gh auth refresh -h github.com -s project`), and a GitHub project whose `Status` field holds the states that `trackers/github.md` names.
-
-  ```
-  - Track work in GitHub Issues, on the GitHub project **Roadmap** of `acme`.
-  ```
+Run `/pipe-skills:setup` in the project. It asks for Linear or GitHub Issues, checks what the tracker needs, fixes what it can after your go, and writes the line of the project `CLAUDE.md` that names where the work lives. Both trackers use the `gh` CLI when the repository has a GitHub remote.
 
 ## Skills
 
@@ -33,6 +21,7 @@ The pipeline:
 
 | Skill | What it does | Example |
 |---|---|---|
+| `setup` | Makes a project ready: the tracker line in `CLAUDE.md`, and the team or GitHub project with its states and priority. | `/pipe-skills:setup` |
 | `prd` | Files an issue or milestone that is the specification of its own implementation, or updates one after the plan changes. | `/pipe-skills:prd file an issue for the CSV export we just discussed` |
 | `implement` | Implements one issue in a worktree, commits each validated step, reviews with fresh reviewers until a round finds no blocker and no in-scope bug, and stops at the merge gate. | `/pipe-skills:implement ACM-42` or `/pipe-skills:implement #42` |
 | `review` | Reviews a pull request or a branch, and gives a merge verdict first. | `/pipe-skills:review 118` |
@@ -50,7 +39,7 @@ Working style:
 
 ## How the skills fit together
 
-One piece of work moves through the states of its issue in the tracker. Each arrow names who acts, and the skill when one runs. `promote-rule` is not on the chart, because it can run at any time, when you correct Claude. The model behind the chart, and the rules that TLC checks on it, are in `docs/statecharts`.
+One piece of work moves through the states of its issue in the tracker. Each arrow names who acts, and the skill when one runs. `setup` is not on the chart, because it runs once before the first issue, and `promote-rule` is not on it, because it can run at any time, when you correct Claude. The model behind the chart, and the rules that TLC checks on it, are in `docs/statecharts`.
 
 ```mermaid
 ---

@@ -1,5 +1,9 @@
 # pipe-skills
 
+## Tracker
+
+- Track work in GitHub Issues, on the GitHub project **Pipe's skills** of `felipeam86`.
+
 ## Statechart
 
 - The statechart in `docs/statecharts` and the skills describe one behavior, so they change in the same commit, in both directions: a skill change that adds, removes, or moves a step, a state, or a rule changes `Lifecycle.tla` and `view.mjs`, and a model change changes the skill text it describes. Run TLC with the command in `docs/statecharts/README.md`, and paste the new chart into `README.md`, because a chart that drifts from the skills tells the user a wrong story.

@@ -1,6 +1,6 @@
 # GitHub tracker
 
-The project `CLAUDE.md` names the GitHub project that holds the states: `- Track work in GitHub Issues, on the GitHub project **Roadmap** of `acme`.` The issues live in the repository of the current checkout, `<repository>` = `gh repo view --json nameWithOwner --jq .nameWithOwner`, and `gh api repos/{owner}/{repo}/...` fills that repository in by itself. `<owner>` is the owner of the project, which can differ from the owner of the repository. When `gh project` fails for the `project` scope, stop and name the setup step of `README.md`.
+The project `CLAUDE.md` names the GitHub project that holds the states: `- Track work in GitHub Issues, on the GitHub project **Roadmap** of `acme`.` The issues live in the repository of the current checkout, `<repository>` = `gh repo view --json nameWithOwner --jq .nameWithOwner`, and `gh api repos/{owner}/{repo}/...` fills that repository in by itself. `<owner>` is the owner of the project, which can differ from the owner of the repository. When `gh project` fails for the `project` scope, stop and name `pipe-skills:setup`.
 
 ## Identifier
 
@@ -13,7 +13,9 @@ Look these up once per session, and keep the IDs:
 - The project number and node ID: `gh project list --owner <owner> --limit 1000 --format json`, matched by title, because an organization holds more projects than the first page.
 - The `Status` field and its option IDs, and the `Priority` field when the project has one: `gh project field-list <number> --owner <owner> --format json`.
 
-The states are the options of `Status`, with the names of the GitHub project templates: `Todo` is `Ready`, `In Progress` is `In progress`, `In Review` is `In review`, and `Backlog` and `Done` keep their names. When the project `CLAUDE.md` maps a state to another option name, use that name. When an option is missing, stop and name it: the user adds the lane.
+The states are the options of `Status`, with the names of the GitHub project templates: `Todo` is `Ready`, `In Progress` is `In progress`, `In Review` is `In review`, and `Backlog` and `Done` keep their names. A project with its own lanes maps a state to an existing option in one more line of the project `CLAUDE.md`: `- The pipeline states map to the Status options: `Todo` = `To Do`, `In Progress` = `Doing`, `In Review` = `Review`.` Use the mapped name where the line gives one. When an option is missing, stop and name `pipe-skills:setup`.
+
+The priority is the `Priority` field: its options in their order, the first one the highest, whatever their names.
 
 ## Operations
 

@@ -8,7 +8,7 @@ disable-model-invocation: false
 
 An issue is the specification for its implementation: the design and the plan live in the issue, not in a document in the repository.
 
-The project `CLAUDE.md` names where it tracks work. Read the tracker file for it, `${CLAUDE_PLUGIN_ROOT}/trackers/linear.md` or `${CLAUDE_PLUGIN_ROOT}/trackers/github.md`, and run each operation below as that file says. If the project `CLAUDE.md` names no tracker, ask the user, and offer to add the line that the tracker file shows.
+The project `CLAUDE.md` names where it tracks work. Read the tracker file for it, `${CLAUDE_PLUGIN_ROOT}/trackers/linear.md` or `${CLAUDE_PLUGIN_ROOT}/trackers/github.md`, and run each operation below as that file says. If the project `CLAUDE.md` names no tracker, stop and offer `/pipe-skills:setup`.
 
 A project holds milestones, and a milestone holds issues. Order issues with "blocked by" relations. Link issues as children of a parent issue only when the group is itself a piece of work with its own success criteria, with the parent link of the tracker file.
 
