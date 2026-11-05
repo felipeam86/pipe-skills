@@ -19,8 +19,8 @@ The priority is the `Priority` field: its options in their order, the first one 
 
 ## Operations
 
-- **Read an issue.** `gh issue view <n> --json number,title,body,state,url,createdAt,comments,milestone,projectItems`.
-- **Hash the description.** `gh issue view <n> --json body --jq .body | shasum -a 256 | cut -c1-12`. The state is `.projectItems[].status.name` of the item in the project.
+- **Read an issue.** `gh issue view <n> --json number,title,body,state,url,createdAt,comments,milestone,projectItems`. The state is `.projectItems[].status.name` of the item in the project.
+- **Hash the description.** `gh issue view <n> --json body --jq .body | shasum -a 256 | cut -c1-12`.
 - **File an issue.** `gh issue create --title <title> --body-file <file> --assignee @me --milestone <name>`, then set the state, set `Priority` when the project has the field, and add each "blocked by" relation. Read the state back, because the `Item added to project` workflow of a project can set its own state after yours. Give the number and the URL.
 - **Edit the description.** `gh issue edit <n> --body-file <file>`.
 - **Comment.** `gh issue comment <n> --body-file <file>`.
