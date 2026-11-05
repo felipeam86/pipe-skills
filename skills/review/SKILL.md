@@ -8,7 +8,7 @@ disable-model-invocation: false
 
 Answer one question: is the change ready to merge? Change no file.
 
-1. Read the diff: `gh pr diff <n>` with a pull request, `git diff <target>...<branch>` without one. Read the linked issue, which is the specification, and every `CLAUDE.md` on the path of a changed file.
+1. Read the diff: `gh pr diff <n>` with a pull request, `git diff <target>...<branch>` without one. Read the linked issue, which is the specification, with the tracker file that the project `CLAUDE.md` names, `${CLAUDE_PLUGIN_ROOT}/trackers/linear.md` or `${CLAUDE_PLUGIN_ROOT}/trackers/github.md`. Read every `CLAUDE.md` on the path of a changed file.
 2. On a re-review, check the findings of the earlier review first. Then report only new findings: those that the fixes caused or that the earlier review missed.
 3. Prove each finding with a concrete failure: the input, the state, and the wrong result. Drop a finding you cannot make concrete.
 4. Class each finding by its relation to the issue. You do not decide when it gets fixed.

@@ -1,6 +1,6 @@
 ---- MODULE Lifecycle ----
 \* The lifecycle of one piece of work through the pipe-skills pipeline.
-\* status is the Linear state of the issue, sub is where the work is inside it.
+\* status is the state of the issue in the tracker, sub is where the work is inside it.
 VARIABLES status, sub, mode, prdGo, filed, reviewClean, warned, shipGo, merged, isFollowup, followups, versionBumped
 vars == <<status, sub, mode, prdGo, filed, reviewClean, warned, shipGo, merged, isFollowup, followups, versionBumped>>
 rest == <<mode, prdGo, filed, reviewClean, warned, shipGo, merged, isFollowup, followups, versionBumped>>

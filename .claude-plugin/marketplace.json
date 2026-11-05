@@ -4,13 +4,13 @@
     "name": "Felipe Aguirre"
   },
   "metadata": {
-    "description": "A spec-to-ship pipeline on Linear for Claude Code, plus the working-style skills that keep it honest."
+    "description": "A spec-to-ship pipeline on Linear or GitHub Issues for Claude Code, plus the working-style skills that keep it honest."
   },
   "plugins": [
     {
       "name": "pipe-skills",
       "source": "./",
-      "description": "Write a Linear issue as its own spec, implement it in reviewed steps, ship it, or work through a whole Todo queue on its own."
+      "description": "Write a Linear or GitHub issue as its own spec, implement it in reviewed steps, ship it, or work through a whole Todo queue on its own."
     }
   ]
 }

@@ -1,6 +1,6 @@
 # pipe-skills
 
-A Claude Code plugin that runs a spec-to-ship pipeline on Linear. A Linear issue is the specification. Claude implements it in validated, committed steps, has a fresh reviewer check the work until the review is clean, and stops at the merge gate. When you are ready, Claude squash-merges the work and closes the issue. It can also work through a whole `Todo` queue on its own, one issue after another.
+A Claude Code plugin that runs a spec-to-ship pipeline on Linear or on GitHub Issues. An issue is the specification. Claude implements it in validated, committed steps, has a fresh reviewer check the work until the review is clean, and stops at the merge gate. When you are ready, Claude squash-merges the work and closes the issue. It can also work through a whole `Todo` queue on its own, one issue after another.
 
 The plugin also has the working-style skills that the pipeline relies on: give an opinion without changing anything, interview you for a spec, keep documents at their final state, and turn corrections into lasting rules.
 
@@ -13,12 +13,18 @@ The plugin also has the working-style skills that the pipeline relies on: give a
 
 ## Setup
 
-- The [Linear MCP server](https://linear.app/docs/mcp), connected and authenticated: `claude mcp add --transport http linear-server https://mcp.linear.app/mcp`.
-- The `gh` CLI, authenticated, when the repository has a GitHub remote. Without a remote, the pipeline works on local branches, and the Linear issue holds the record.
-- One line in the project `CLAUDE.md` that names where the work lives:
+One line in the project `CLAUDE.md` names where the work lives. The tracker file of each tracker holds what the skills do with it.
+
+- Linear, in `trackers/linear.md`: the [Linear MCP server](https://linear.app/docs/mcp), connected and authenticated with `claude mcp add --transport http linear-server https://mcp.linear.app/mcp`, and the `gh` CLI when the repository has a GitHub remote.
 
   ```
   - Track work in the Linear project **Acme Web** of the team `ACM`.
+  ```
+
+- GitHub Issues, in `trackers/github.md`: the `gh` CLI with the `project` scope (`gh auth refresh -h github.com -s project`), and a GitHub project whose `Status` field holds the states that `trackers/github.md` names.
+
+  ```
+  - Track work in GitHub Issues, on the GitHub project **Roadmap** of `acme`.
   ```
 
 ## Skills
@@ -27,8 +33,8 @@ The pipeline:
 
 | Skill | What it does | Example |
 |---|---|---|
-| `prd` | Files a Linear issue or milestone that is the specification of its own implementation, or updates one after the plan changes. | `/pipe-skills:prd file an issue for the CSV export we just discussed` |
-| `implement` | Implements one issue in a worktree, commits each validated step, reviews with fresh reviewers until a round finds no blocker and no in-scope bug, and stops at the merge gate. | `/pipe-skills:implement ACM-42` |
+| `prd` | Files an issue or milestone that is the specification of its own implementation, or updates one after the plan changes. | `/pipe-skills:prd file an issue for the CSV export we just discussed` |
+| `implement` | Implements one issue in a worktree, commits each validated step, reviews with fresh reviewers until a round finds no blocker and no in-scope bug, and stops at the merge gate. | `/pipe-skills:implement ACM-42` or `/pipe-skills:implement #42` |
 | `review` | Reviews a pull request or a branch, and gives a merge verdict first. | `/pipe-skills:review 118` |
 | `ship` | Rebases, squash-merges, closes the issue, files only the follow-ups that earn an issue, and cleans up the branch and the worktree. | `/pipe-skills:ship ACM-42` |
 | `autonomous-loop` | Implements and ships the issues you name, or every issue of the project in `Todo` state, with no stop for you, from the highest priority, one fresh subagent per issue. | `/pipe-skills:autonomous-loop` |
@@ -44,7 +50,7 @@ Working style:
 
 ## How the skills fit together
 
-One piece of work moves through the Linear states of its issue. Each arrow names who acts, and the skill when one runs. `promote-rule` is not on the chart, because it can run at any time, when you correct Claude. The model behind the chart, and the rules that TLC checks on it, are in `docs/statecharts`.
+One piece of work moves through the states of its issue in the tracker. Each arrow names who acts, and the skill when one runs. `promote-rule` is not on the chart, because it can run at any time, when you correct Claude. The model behind the chart, and the rules that TLC checks on it, are in `docs/statecharts`.
 
 ```mermaid
 ---

@@ -1,19 +1,19 @@
 ---
 name: implement
-description: Implement a Linear issue end to end. Sets up the worktree and branch, works in committed steps, keeps the issue at its final state, reviews with a fresh reviewer until the review is clean, and stops at the merge gate. For a project whose CLAUDE.md names a Linear team and project. Use when the user says "implement issue ABC-123", "work on ABC-123", "build this issue", or runs /pipe-skills:implement in such a project.
+description: Implement a Linear or GitHub issue end to end. Sets up the worktree and branch, works in committed steps, keeps the issue at its final state, reviews with a fresh reviewer until the review is clean, and stops at the merge gate. For a project whose CLAUDE.md names where it tracks work. Use when the user says "implement issue ABC-123", "implement issue #42", "work on ABC-123", "build this issue", or runs /pipe-skills:implement in such a project.
 disable-model-invocation: false
 ---
 
-# Implement a Linear issue
+# Implement an issue
 
-The issue is the specification. Use the tools of the Linear MCP server; load them with ToolSearch first.
+The issue is the specification. The project `CLAUDE.md` names where it tracks work. Read the tracker file for it, `${CLAUDE_PLUGIN_ROOT}/trackers/linear.md` or `${CLAUDE_PLUGIN_ROOT}/trackers/github.md`, and run each operation below as that file says.
 
 ## Set up
 
-- Read the issue with `get_issue` and `list_comments`, and every `CLAUDE.md` that governs the files it touches.
+- Read the issue with its comments, and every `CLAUDE.md` that governs the files it touches.
 - The target branch is the branch the user is on.
-- Create the worktree with EnterWorktree and the issue identifier as its `name`, then run `git fetch origin` and `git checkout -B <gitBranchName> origin/<target>` in it. Set the issue to `In Progress`.
-- With a GitHub remote, push the branch, open a draft pull request, and attach it to the issue with `create_attachment`. Without one, the issue holds the record.
+- Create the worktree with EnterWorktree and the worktree name of the tracker file as its `name`. Name the branch, then run `git fetch origin` and check it out in the worktree: `git checkout -B <branch> origin/<branch>` when it is on the remote, so that the commits of an earlier run stay, else `git checkout -B <branch> origin/<target>`. Without a remote, `git checkout -B <branch> <target>`, or keep the local branch when it exists. Set the issue to `In Progress`.
+- With a GitHub remote, push each commit of the run, a step or a fix, so that the reviewer, the merge, and a later run see it. After the first push, when the branch has no pull request, open a draft pull request whose title starts with the issue identifier, because GitHub refuses a pull request with no commit, and link it to the issue. Without a remote, the issue holds the record.
 
 ## Work in steps
 

@@ -1,16 +1,16 @@
 ---
 name: prd
-description: Create a Linear milestone, or a Linear issue that is the specification for its own implementation, or update one after the plan changes. For a project whose CLAUDE.md names a Linear team and project. Use when the user says "create an issue for this effort", "push this as an issue", "update issue ABC-123", "track this in an issue", or runs /pipe-skills:prd in such a project.
+description: Create a milestone, or an issue that is the specification for its own implementation, or update one after the plan changes, in Linear or GitHub Issues. For a project whose CLAUDE.md names where it tracks work. Use when the user says "create an issue for this effort", "push this as an issue", "update issue ABC-123", "update issue #42", "track this in an issue", or runs /pipe-skills:prd in such a project.
 disable-model-invocation: false
 ---
 
-# Linear issue as PRD
+# Issue as PRD
 
-A Linear issue is the specification for its implementation: the design and the plan live in the issue, not in a document in the repository. Use the tools of the Linear MCP server; load them with ToolSearch first.
+An issue is the specification for its implementation: the design and the plan live in the issue, not in a document in the repository.
 
-The project `CLAUDE.md` names the Linear team and project. If it names none, ask the user, and offer to add the line.
+The project `CLAUDE.md` names where it tracks work. Read the tracker file for it, `${CLAUDE_PLUGIN_ROOT}/trackers/linear.md` or `${CLAUDE_PLUGIN_ROOT}/trackers/github.md`, and run each operation below as that file says. If the project `CLAUDE.md` names no tracker, ask the user, and offer to add the line that the tracker file shows.
 
-A project holds milestones, and a milestone holds issues. Do not use sub-issues: order issues with "blocked by" relations, and use a parent issue only when the group is itself a piece of work with its own success criteria.
+A project holds milestones, and a milestone holds issues. Order issues with "blocked by" relations. Link issues as children of a parent issue only when the group is itself a piece of work with its own success criteria, with the parent link of the tracker file.
 
 ## Draft first
 
@@ -26,7 +26,7 @@ The case, written when the issue is planned: **Description** (one line), **Goal*
 
 The design, added when the work starts: **State** (what exists today), **Options** (when there is more than one path), **Plan** (the steps in order, which `pipe-skills:implement` commits one at a time), **Context** (what else a reader needs).
 
-Drop a section that holds nothing. File with `save_issue`: the team, the project, the milestone, `assignee: "me"`, state `Todo`, and its "blocked by" relations. Give the identifier and the URL, and offer to run `pipe-skills:implement`.
+Drop a section that holds nothing. File the issue in the milestone, assigned to the user, in state `Todo`, with its priority and its "blocked by" relations, so that `pipe-skills:autonomous-loop` takes the issues in the correct order. Give the identifier and the URL, and offer to run `pipe-skills:implement`.
 
 ## Update
 

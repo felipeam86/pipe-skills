@@ -1,11 +1,12 @@
 {
   "name": "pipe-skills",
-  "description": "Write a Linear issue as its own spec, implement it in reviewed steps, ship it, or work through a whole Todo queue on its own.",
+  "description": "Write a Linear or GitHub issue as its own spec, implement it in reviewed steps, ship it, or work through a whole Todo queue on its own.",
   "author": {
     "name": "Felipe Aguirre"
   },
   "keywords": [
     "linear",
+    "github",
     "workflow",
     "code-review",
     "autonomous",
