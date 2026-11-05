@@ -30,7 +30,7 @@ Drop a section that holds nothing. File the issue in its outcome, assigned to th
 
 ## Update
 
-When the plan changes, rewrite the description to the current proposal only, with `pipe-skills:final-state`, and add a comment with the change and its reason.
+When the plan changes, rewrite the description to the current proposal only, with `pipe-skills:final-state`, and add a comment with the change and its reason. When the issue serves another outcome, move it there after the user's go, and say why in the same comment.
 
 ## Close
 

@@ -28,6 +28,7 @@ The priority is the `Priority` field: its options in their order, the first one 
 - **Add a "blocked by" relation.** Take the node IDs with `gh issue view <n> --json id --jq .id`, then `gh api graphql -f query='mutation($a:ID!,$b:ID!){addBlockedBy(input:{issueId:$a,blockingIssueId:$b}){clientMutationId}}' -f a=<blocked-id> -f b=<blocker-id>`.
 - **File an outcome.** An outcome is a milestone of the repository: `gh api repos/{owner}/{repo}/milestones -f title=<title> -f description=<sections> -f due_on=<YYYY-MM-DD>T00:00:00Z`.
 - **List the outcomes.** `gh api --paginate repos/{owner}/{repo}/milestones --jq '.[] | {title, description, due_on}'`, which gives the open milestones.
+- **Move an issue to another outcome.** `gh issue edit <n> --milestone <name>`.
 - **Name the branch.** `<n>-<title in kebab case>`, at most 50 characters. Create it on the remote with `gh issue develop <n> --name <branch> --base <target>`, which also links it to the issue and fetches it. `--base` needs the target branch on the remote. When `gh issue develop <n> --list` already shows a branch, use it: `git fetch origin <branch>`.
 - **Link the pull request.** The pull request body starts with `Part of #<n>.` Do not use a closing keyword: it closes the issue only on a merge into the default branch, and `ship` closes the issue.
 - **Link a follow-up.** The first line of the new issue names the closed issue as `#<n>`, which GitHub links both ways.
