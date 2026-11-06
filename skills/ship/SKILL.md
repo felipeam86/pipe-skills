@@ -15,11 +15,7 @@ Run the merge, the cleanup and the checkout from the main checkout, not from the
 Report the state and the plan first. Wait for a go before a step that can lose work: an unpushed commit, an uncommitted change, or a rebase. Then run the steps that still apply:
 
 1. Rebase the branch onto the target branch, if it is behind.
-2. Squash merge: mark a draft pull request ready with `gh pr ready <n>`, then `gh pr merge <n> --squash --subject "<identifier>: <issue title> (#<n>)"`. Without a pull request:
-   - Check out the target branch in the main checkout, so that the squash commit lands on the target.
-   - With a remote, run `git fetch origin`, and check that `git rev-list origin/<target>..<target>` gives nothing, because the push below publishes every local commit of the target. Else report those commits and wait for a go.
-   - Run `git merge --squash <branch>` and make a commit titled `<identifier>: <issue title>` whose body keeps the step messages.
-   - With a remote, run `git push origin <target>`. When the push fails, for example on a protected branch, stop before step 3 and report the failure, because steps 3 and 5 close the issue and delete the remote copy of the branch.
+2. Squash merge: mark a draft pull request ready with `gh pr ready <n>`, then `gh pr merge <n> --squash --subject "<identifier>: <issue title> (#<n>)"`. Without a pull request, `git merge --squash <branch>` and a commit titled `<identifier>: <issue title>` whose body keeps the step messages.
 3. Close the issue, and add a comment with the merge commit and the findings that the merge-gate comment lists.
 4. File a follow-up issue only for an out-of-scope finding that is a reproduced bug, a broken `CLAUDE.md` rule, or a feature of high value. Before you file, add the case to an open issue with the same cause, if there is one. File nothing when the closed issue is itself a follow-up. Start each new issue with `Deferred from the review of <identifier>.` and link it to the closed issue.
 5. Leave the worktree with ExitWorktree when the session is in it, remove it, and run `git worktree prune`. When the main checkout is on the branch, check out the target branch, because git refuses to delete a branch that a checkout holds. Then delete the branch:
