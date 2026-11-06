@@ -87,10 +87,9 @@ stateDiagram-v2
   s8 --> s9: a discovery changes the plan
   s8 --> s10: the steps are committed, a fresh reviewer starts
   s9 --> s8: the issue is rewritten (/final-state)
-  s10 --> s8: a finding is worth another round
-  s10 --> s9: findings come back in one area, Claude questions the method
+  s10 --> s8: findings come back in one area, Claude changes its method or a finding is worth another round
   s10 --> s13: no finding is worth another round
-  s10 --> s11: 3 rounds pass, Claude asks you
+  s10 --> s11: 3 rounds pass, or the method needs you, Claude asks you
   s13 --> s15: you run /ship and give the go
   classDef purple fill:#f1e8ff,stroke:#7c4dcc,color:#3d2370
   classDef blue fill:#e6f0ff,stroke:#2f6fd6,color:#173a73
@@ -175,10 +174,9 @@ stateDiagram-v2
   s8 --> s19: you approve superseded or obsolete
   s8 --> s21: you approve done
   s11 --> s10: the issue is rewritten (/final-state)
-  s12 --> s10: a finding is worth another round
-  s12 --> s11: findings come back in one area, Claude questions the method
+  s12 --> s10: findings come back in one area, Claude changes its method or a finding is worth another round
   s12 --> s24: no finding is worth another round
-  s12 --> s13: 3 rounds pass, Claude asks you
+  s12 --> s13: 3 rounds pass, or the method needs you, Claude asks you
   s17 --> s16: you reject it or you approve current or drifted
   s17 --> s19: you approve superseded or obsolete
   s17 --> s21: you approve done

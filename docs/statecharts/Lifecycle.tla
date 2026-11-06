@@ -67,9 +67,9 @@ TheStepsAreCommitted ==
     /\ sub = "building" /\ Move("In Progress", "reviewing")
     /\ UNCHANGED rest
 
-\* implement questions its method, or asks the user, before it adds more guards in one area.
+\* implement changes its own method, not the issue, before it adds more guards in one area. When it asks the user instead, that is TheReviewDoesNotConverge.
 TheFindingsComeBackInOneArea ==
-    /\ sub = "reviewing" /\ Move("In Progress", "replanning")
+    /\ sub = "reviewing" /\ Move("In Progress", "building")
     /\ UNCHANGED rest
 
 TheReviewFindsWorkToFix ==
