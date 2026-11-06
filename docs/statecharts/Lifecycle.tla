@@ -143,8 +143,10 @@ Next ==
 
 Spec == Init /\ [][Next]_vars
 
-\* Lifecycle-main.cfg keeps only the main path that you drive by hand, for the first chart of README.md.
-MainPath == mode' /= "auto" /\ sub' \notin {"skipped", "verdicts", "backlog"} /\ ~warned'
+\* The charts of README.md: each config keeps one flow. Lifecycle.cfg checks the rules on every flow and gives no chart.
+MainPath == mode' /= "auto" /\ sub' \notin {"skipped", "verdicts", "backlog"}
+LoopPath == mode' /= "manual" /\ sub' /= "verdicts"
+AssessPath == mode' = "none"
 
 NoMergeBeforeCleanReviewUnlessYouSawAWarningOrRanTheLoop == merged => (reviewClean \/ warned \/ mode = "auto")
 NoMergeWithoutYourGo == merged => (shipGo \/ mode = "auto")
