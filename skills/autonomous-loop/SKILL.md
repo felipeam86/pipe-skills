@@ -23,7 +23,7 @@ One issue at a time, because each one merges into the target branch before the n
 1. Skip it when it is no longer `Todo`, or when it has an open blocker.
 2. Start a fresh subagent with the Agent tool: `isolation: "worktree"`, the model of this session, and the prompt below. Do not fork, so that the subagent starts clean.
 3. End the turn and wait for its notification. When it ends without its report, ask it for the report with SendMessage.
-4. Record its report, and remove its worktree when the harness did not. A worktree that the Agent tool made is locked: remove it with `git worktree remove -f -f`. Then delete the local branch of a shipped issue, which the worktree held, as step 5 of the ship skill says.
+4. Record its report, and remove its worktree when the harness did not. A worktree that the Agent tool made is locked: remove it with `git worktree remove -f -f`. Then delete the local branch of a shipped issue, which the worktree held, as step 5 of `pipe-skills:ship` says in `${CLAUDE_PLUGIN_ROOT}/skills/ship/SKILL.md`.
 
 A result other than `shipped` does not stop the loop. When a guard or a tool stops a subagent, start one more subagent for the same issue. When the same failure stops three issues in a row, the failure is in the environment: end the loop. At the end, take the issues skipped for a blocker once more when they have no open blocker now. An issue skipped for its verdict waits for the user.
 
@@ -43,4 +43,4 @@ A result other than `shipped` does not stop the loop. When a guard or a tool sto
 
 ## Report
 
-The counts first: shipped, skipped, stopped. Then one line per issue with its result, pull request and merge commit; the decisions the subagents recorded; the issues they filed; and for each issue that did not ship, the reason and the repair you propose. For an issue skipped for its verdict, give the verdict and the evidence, and propose `/pipe-skills:sweep <identifier>`. Before the report, run steps 6 and 7 of the ship skill once in `<root>`, with the branch of each shipped issue, and report each check.
+The counts first: shipped, skipped, stopped. Then one line per issue with its result, pull request and merge commit; the decisions the subagents recorded; the issues they filed; and for each issue that did not ship, the reason and the repair you propose. For an issue skipped for its verdict, give the verdict and the evidence, and propose `/pipe-skills:sweep <identifier>`. Before the report, run steps 6 and 7 of `pipe-skills:ship` once in `<root>`, as `${CLAUDE_PLUGIN_ROOT}/skills/ship/SKILL.md` says, with the branch of each shipped issue, and report each check.

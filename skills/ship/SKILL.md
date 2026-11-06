@@ -18,18 +18,16 @@ Report the state and the plan first. Wait for a go before a step that can lose w
 2. Squash merge: mark a draft pull request ready with `gh pr ready <n>`, then `gh pr merge <n> --squash --subject "<identifier>: <issue title> (#<n>)"`. Without a pull request, `git merge --squash <branch>` and a commit titled `<identifier>: <issue title>` whose body keeps the step messages.
 3. Close the issue, and add a comment with the merge commit and the findings that the merge-gate comment lists.
 4. File a follow-up issue only for an out-of-scope finding that is a reproduced bug, a broken `CLAUDE.md` rule, or a feature of high value. Before you file, add the case to an open issue with the same cause, if there is one. File nothing when the closed issue is itself a follow-up. Start each new issue with `Deferred from the review of <identifier>.` and link it to the closed issue.
-5. Leave the worktree with ExitWorktree when the session is in it, remove it, and run `git worktree prune`. Then delete the branch:
-   - Local: `git branch -D <branch>`, because a squash merge leaves the branch unmerged for git. Delete it only when `git rev-list <head>..<branch>` is empty, where `<head>` is the `headRefOid` of the pull request, or the commit you merged without one. Else keep the branch and report its commits that the merge does not hold.
-   - Remote: `git push origin --delete <branch>` when `git ls-remote --heads origin <branch>` still lists it, because GitHub or another person can delete it first.
-6. Update the local git state from the main checkout, when a remote exists. Run `git fetch --prune origin`, which also removes the ref `origin/<branch>` of a remote branch that someone else deleted. Then bring the target branch to `origin/<target>` by fast-forward only:
-   - When the main checkout is on the target branch, or is on another branch with no uncommitted change, check out the target branch and run `git pull --ff-only`. Git refuses an update that overwrites an uncommitted change, so the change stays.
-   - When the main checkout is on another branch and has uncommitted changes, keep that branch, and run `git fetch origin <target>:<target>`, which fast-forwards a branch that no checkout holds.
-   - When the fast-forward fails because the target branch diverged from its remote, do not merge, rebase, or reset. Report the commits on each side.
-
-   Without a remote, check out the target branch.
+5. Leave the worktree with ExitWorktree when the session is in it, remove it, and run `git worktree prune`. When the main checkout is on the branch, check out the target branch, because git refuses to delete a branch that a checkout holds. Then delete the branch:
+   - Local: with a pull request, `<head>` is its `headRefOid`. Fetch it with `git fetch origin pull/<n>/head`, because a bot or a suggestion committed on GitHub can add a commit that the local repository does not have. Without a pull request, `<head>` is the commit you merged. When `git merge-base --is-ancestor <branch> <head>` exits 0, the merge holds every commit of the branch: delete it with `git branch -D <branch>`, which a squash merge needs because git sees the branch as unmerged. Any other exit, an error included, means keep the branch and report it.
+   - Remote: `git push origin --delete <branch>` when `git ls-remote origin refs/heads/<branch>` still lists it, because GitHub or another person can delete it first.
+6. Update the target branch, when a remote exists. Run `git fetch --prune origin`, which also removes the ref `origin/<branch>` of a remote branch that someone else deleted. Then fast-forward the target branch to `origin/<target>`, and never merge, rebase, or reset it. Keep the main checkout on its branch.
+   - When a checkout holds the target branch, the main checkout or another worktree that `git worktree list` shows, run `git -C <path> merge --ff-only origin/<target>`. Git refuses an update that overwrites an uncommitted change, so the change stays.
+   - When no checkout holds it, run `git fetch origin <target>:<target>`.
+   - When the fast-forward fails, report why: the commits on each side when the target branch diverged from its remote, or the files of the uncommitted change that blocks it.
 7. Check the end state, and report each check with its result:
    - With a remote, `git rev-parse <target>` and `git rev-parse origin/<target>` give the same commit.
-   - `git branch --list <branch>` gives nothing, and with a remote, `git branch -r --list origin/<branch>` and `git ls-remote --heads origin <branch>` give nothing.
+   - `git branch --list <branch>` gives nothing, and with a remote, `git branch -r --list origin/<branch>` and `git ls-remote origin refs/heads/<branch>` give nothing.
    - List the local branches whose upstream is gone, which `git branch -vv` marks `: gone]`. Do not delete them: such a branch can hold work that is not on the remote.
 
    When a check fails, name the step that left it and the reason.
