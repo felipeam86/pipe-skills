@@ -67,6 +67,11 @@ TheStepsAreCommitted ==
     /\ sub = "building" /\ Move("In Progress", "reviewing")
     /\ UNCHANGED rest
 
+\* implement changes its own method, not the issue, before it adds more guards in one area. When it asks the user instead, that is TheReviewDoesNotConverge.
+TheFindingsComeBackInOneArea ==
+    /\ sub = "reviewing" /\ Move("In Progress", "building")
+    /\ UNCHANGED rest
+
 TheReviewFindsWorkToFix ==
     /\ sub = "reviewing" /\ Move("In Progress", "building")
     /\ UNCHANGED rest
@@ -80,6 +85,11 @@ TheReviewDoesNotConverge ==
     /\ sub = "reviewing" /\ Move("In Progress", "stuck")
     /\ UNCHANGED rest
 
+YouAnswerAndTheWorkContinues ==
+    /\ sub = "stuck" /\ mode = "manual" /\ Move("In Progress", "building")
+    /\ warned' = FALSE
+    /\ UNCHANGED <<mode, prdGo, filed, reviewClean, shipGo, merged, isFollowup, followups, versionBumped, verdictGo, verdictApplied>>
+
 \* ship files a follow-up only when the closed issue is not itself a follow-up.
 Ship ==
     /\ Move("Done", "done")
@@ -90,7 +100,7 @@ Ship ==
 YouRunShipAndGiveTheGo ==
     /\ sub = "gate" /\ mode = "manual" /\ shipGo' = TRUE /\ Ship
 
-\* autonomous-loop ships without a go, also when the review is not clean.
+\* autonomous-loop ships without a go, also when it stops after 3 rounds.
 TheSubagentShipsIt ==
     /\ sub \in {"gate", "stuck"} /\ mode = "auto" /\ Ship /\ UNCHANGED shipGo
 
@@ -135,7 +145,7 @@ Next ==
     \/ YouAskForAdvice \/ YouAskForAnInterview \/ YouRunPrd \/ YouGiveTheGoToFile
     \/ YouRunImplement \/ TheLoopTakesIt \/ TheLoopSkipsAStaleIssue \/ TheSubagentJudgesItNotWorthIt \/ YouMoveItBackToTodo
     \/ ADiscoveryChangesThePlan \/ TheIssueIsRewritten \/ TheStepsAreCommitted
-    \/ TheReviewFindsWorkToFix \/ TheReviewIsClean \/ TheReviewDoesNotConverge
+    \/ TheReviewFindsWorkToFix \/ TheFindingsComeBackInOneArea \/ TheReviewIsClean \/ TheReviewDoesNotConverge \/ YouAnswerAndTheWorkContinues
     \/ YouRunShipAndGiveTheGo \/ TheSubagentShipsIt
     \/ ClaudeWarnsTheReviewIsNotClean \/ YouGiveTheGoAnyway
     \/ YouRunAssessOrSweep \/ YouApproveCurrentOrDrifted \/ YouApproveDone \/ YouApproveSupersededOrObsolete \/ YouRejectTheVerdict

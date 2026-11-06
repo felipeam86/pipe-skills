@@ -1,6 +1,6 @@
 ---
 name: implement
-description: Implement a Linear or GitHub issue end to end. Sets up the worktree and branch, works in committed steps, keeps the issue at its final state, reviews with a fresh reviewer until the review is clean, and stops at the merge gate. For a project whose CLAUDE.md names where it tracks work. Use when the user says "implement issue ABC-123", "implement issue #42", "work on ABC-123", "build this issue", or runs /pipe-skills:implement in such a project.
+description: Implement a Linear or GitHub issue end to end. Sets up the worktree and branch, works in committed steps, keeps the issue at its final state, reviews with a fresh reviewer until no finding is worth another round, and stops at the merge gate. For a project whose CLAUDE.md names where it tracks work. Use when the user says "implement issue ABC-123", "implement issue #42", "work on ABC-123", "build this issue", or runs /pipe-skills:implement in such a project.
 disable-model-invocation: false
 ---
 
@@ -17,17 +17,21 @@ The issue is the specification. The project `CLAUDE.md` names where it tracks wo
 
 ## Work in steps
 
-For each step of the plan: implement it, validate it by the rule of the repository, and commit it with a message that starts with the issue identifier and says what the validation found.
+Build the simplest change that meets the success criteria, at the weight that the Business impact gives, because each guard you add is more to review, and more to maintain. Follow the decisions the issue records, and choose the rest of the method yourself.
+
+For each step: implement it, validate it by the rule of the repository, and commit it with a message that starts with the issue identifier and says what the validation found.
 
 When a discovery changes the plan, rewrite the issue description and the pull request description to the current proposal with the `pipe-skills:final-state` skill, and put the change and its reason in an issue comment.
 
 ## Review
 
-Start a fresh reviewer subagent on the most capable model you have, with the `pipe-skills:review` skill. Give it the issue identifier and the pull request number, or the worktree path, the branch and the target branch.
+Start a fresh reviewer subagent on the most capable model you have, with the `pipe-skills:review` skill. Give it the issue identifier and the pull request number, or the worktree path, the branch and the target branch, and nothing more: no account of your work and no earlier findings, so that it judges the change as it is.
 
-You decide what this branch fixes. Fix every blocker, and every in-scope finding unless its cost is too high for its value. Do not fix out-of-scope findings: keep them for the merge-gate comment. Drop a finding you disagree with, and say why in one line. Commit the fixes and start a new reviewer.
+You decide what this branch fixes. Fix every blocker, and each in-scope finding that is worth its cost at the weight of the issue. Do not fix out-of-scope findings: keep them for the merge-gate comment. Drop a finding you disagree with, and say why in one line. Commit the fixes and start a new reviewer.
 
-Repeat until a review finds no blocker and no in-scope bug. Stop and report when a blocker comes back after its fix, or after 10 rounds.
+When findings come back in one area after a fix, stop adding guards there: question the method, and change it or ask the user, because each new guard brings a new finding.
+
+The loop ends when no blocker is left and no remaining finding is worth another round. After 3 rounds, stop and ask the user, because by then the problem is in the method or in the specification.
 
 ## Merge gate
 
