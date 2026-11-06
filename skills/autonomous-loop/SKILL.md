@@ -35,7 +35,7 @@ A result other than `shipped` does not stop the loop. When a guard or a tool sto
 > - Then decide whether the issue is worth its cost. When it is not, change no file, explain why in an issue comment, set the issue to `Backlog` so that no later loop takes it again, and report `skipped: not worth it`.
 > - You already run in a worktree. Do not call EnterWorktree: name the branch as the tracker file says, and check it out as the implement skill says.
 > - Never ask the user. When the issue leaves a choice open, take the option that changes the least and is easiest to reverse, and record it in an issue comment. Stop only when the issue does not say what to build.
-> - Fix every blocker and every in-scope finding in the branch, and file a new issue only by step 4 of the ship skill.
+> - Fix the findings in the branch as the implement skill says, and file a new issue only by step 4 of the ship skill. Where the implement skill asks the user after 3 review rounds, stop the loop of reviews and ship.
 > - Ship without waiting for a go. Rebase when the branch holds only your commits. Mark the pull request ready, watch its checks with one background watcher, and fix a failed check at most three times. Do not remove your worktree, and do not run step 6 of the ship skill: the orchestrator does it in `<root>`.
 > - When the environment fails (a login, a registry, a credential), stop and name the command that fixes it.
 >

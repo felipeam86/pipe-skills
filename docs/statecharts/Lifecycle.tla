@@ -67,6 +67,11 @@ TheStepsAreCommitted ==
     /\ sub = "building" /\ Move("In Progress", "reviewing")
     /\ UNCHANGED rest
 
+\* implement questions its method, or asks the user, before it adds more guards in one area.
+TheFindingsComeBackInOneArea ==
+    /\ sub = "reviewing" /\ Move("In Progress", "replanning")
+    /\ UNCHANGED rest
+
 TheReviewFindsWorkToFix ==
     /\ sub = "reviewing" /\ Move("In Progress", "building")
     /\ UNCHANGED rest
@@ -90,7 +95,7 @@ Ship ==
 YouRunShipAndGiveTheGo ==
     /\ sub = "gate" /\ mode = "manual" /\ shipGo' = TRUE /\ Ship
 
-\* autonomous-loop ships without a go, also when the review is not clean.
+\* autonomous-loop ships without a go, also when it stops after 3 rounds.
 TheSubagentShipsIt ==
     /\ sub \in {"gate", "stuck"} /\ mode = "auto" /\ Ship /\ UNCHANGED shipGo
 
@@ -135,7 +140,7 @@ Next ==
     \/ YouAskForAdvice \/ YouAskForAnInterview \/ YouRunPrd \/ YouGiveTheGoToFile
     \/ YouRunImplement \/ TheLoopTakesIt \/ TheLoopSkipsAStaleIssue \/ TheSubagentJudgesItNotWorthIt \/ YouMoveItBackToTodo
     \/ ADiscoveryChangesThePlan \/ TheIssueIsRewritten \/ TheStepsAreCommitted
-    \/ TheReviewFindsWorkToFix \/ TheReviewIsClean \/ TheReviewDoesNotConverge
+    \/ TheReviewFindsWorkToFix \/ TheFindingsComeBackInOneArea \/ TheReviewIsClean \/ TheReviewDoesNotConverge
     \/ YouRunShipAndGiveTheGo \/ TheSubagentShipsIt
     \/ ClaudeWarnsTheReviewIsNotClean \/ YouGiveTheGoAnyway
     \/ YouRunAssessOrSweep \/ YouApproveCurrentOrDrifted \/ YouApproveDone \/ YouApproveSupersededOrObsolete \/ YouRejectTheVerdict

@@ -1,6 +1,6 @@
 # pipe-skills
 
-A Claude Code plugin that runs a spec-to-ship pipeline on Linear or on GitHub Issues. An issue is the specification. Claude implements it in validated, committed steps, has a fresh reviewer check the work until the review is clean, and stops at the merge gate. When you are ready, Claude squash-merges the work and closes the issue. It can also work through a whole `Todo` queue on its own, one issue after another.
+A Claude Code plugin that runs a spec-to-ship pipeline on Linear or on GitHub Issues. An issue is the specification. Claude implements it in validated, committed steps, has a fresh reviewer check the work until no finding is worth another round, and stops at the merge gate. When you are ready, Claude squash-merges the work and closes the issue. It can also work through a whole `Todo` queue on its own, one issue after another.
 
 The plugin also has the working-style skills that the pipeline relies on: give an opinion without changing anything, interview you for a spec, keep documents at their final state, and turn corrections into lasting rules.
 
@@ -24,7 +24,7 @@ The pipeline:
 | `setup` | Makes a project ready: the tracker line in `CLAUDE.md`, and the team with its project or initiative, or the GitHub project, with its states and priority. | `/pipe-skills:setup` |
 | `prd` | Files an issue that is the specification of its own implementation in the outcome it serves, or a new outcome, or updates one after the plan changes. | `/pipe-skills:prd file an issue for the CSV export we just discussed` |
 | `assess` | Judges whether one `Backlog` or `Todo` issue still matches the code and its goal, and gives a verdict with the evidence. It changes nothing: after your go, the session applies the verdict and posts the review comment. | `/pipe-skills:assess #42` |
-| `implement` | Implements one issue in a worktree, commits each validated step, reviews with fresh reviewers until a round finds no blocker and no in-scope bug, and stops at the merge gate. | `/pipe-skills:implement ACM-42` or `/pipe-skills:implement #42` |
+| `implement` | Implements one issue in a worktree, commits each validated step, reviews with fresh reviewers until no finding is worth another round, and stops at the merge gate. | `/pipe-skills:implement ACM-42` or `/pipe-skills:implement #42` |
 | `review` | Reviews a pull request or a branch, and gives a merge verdict first. | `/pipe-skills:review 118` |
 | `ship` | Rebases, squash-merges, closes the issue, files only the follow-ups that earn an issue, and cleans up the branch and the worktree. | `/pipe-skills:ship ACM-42` |
 | `sweep` | Runs `assess` on every `Backlog` and `Todo` issue, or on the issues you name, reports the verdicts, and applies only the ones you approve: a review comment, a rewrite, a close, or a cancel. | `/pipe-skills:sweep` or `/pipe-skills:sweep #42` |
@@ -67,7 +67,7 @@ stateDiagram-v2
     s8: Building in steps
     s9: Rewriting the plan
     s10: Under review
-    s11: Stopped, reported to you
+    s11: Stopped, Claude asks you
   }
   state "In Review" as s12 {
     s13: At the merge gate
@@ -87,9 +87,10 @@ stateDiagram-v2
   s8 --> s9: a discovery changes the plan
   s8 --> s10: the steps are committed, a fresh reviewer starts
   s9 --> s8: the issue is rewritten (/final-state)
-  s10 --> s8: the review finds a blocker or an in-scope bug
-  s10 --> s13: the review is clean
-  s10 --> s11: a blocker comes back, or 10 rounds pass
+  s10 --> s8: a finding is worth another round
+  s10 --> s9: findings come back in one area, Claude questions the method
+  s10 --> s13: no finding is worth another round
+  s10 --> s11: 3 rounds pass, Claude asks you
   s13 --> s15: you run /ship and give the go
   classDef purple fill:#f1e8ff,stroke:#7c4dcc,color:#3d2370
   classDef blue fill:#e6f0ff,stroke:#2f6fd6,color:#173a73
@@ -133,7 +134,7 @@ stateDiagram-v2
     s10: Building in steps
     s11: Rewriting the plan
     s12: Under review
-    s13: Stopped, reported to you
+    s13: Stopped, Claude asks you
     s14: Warned the review is not clean
   }
   state "Backlog" as s15 {
@@ -174,9 +175,10 @@ stateDiagram-v2
   s8 --> s19: you approve superseded or obsolete
   s8 --> s21: you approve done
   s11 --> s10: the issue is rewritten (/final-state)
-  s12 --> s10: the review finds a blocker or an in-scope bug
-  s12 --> s24: the review is clean
-  s12 --> s13: a blocker comes back, or 10 rounds pass
+  s12 --> s10: a finding is worth another round
+  s12 --> s11: findings come back in one area, Claude questions the method
+  s12 --> s24: no finding is worth another round
+  s12 --> s13: 3 rounds pass, Claude asks you
   s17 --> s16: you reject it or you approve current or drifted
   s17 --> s19: you approve superseded or obsolete
   s17 --> s21: you approve done
@@ -212,7 +214,7 @@ stateDiagram-v2
 
 ## Review bar
 
-A reviewer finds more edge cases in each round. The pipeline ends the loop when a review finds no blocker and no in-scope bug, not when it finds nothing, and it stops after 10 rounds or when a blocker comes back after its fix. A re-review checks the earlier findings and reports only new ones. The reviewer classes each finding as a blocker, in scope (same root cause as the issue, or in the code it touches), or out of scope (a different root cause). Claude fixes the blockers and the in-scope findings in the same branch, and keeps the out-of-scope findings for `ship`, which files a follow-up issue only for a reproduced bug or a feature of high value with a new root cause.
+A reviewer can always find one more edge case, so the bar comes from the issue: its Business impact gives the weight of the work, and a small issue gets a small change and a short review. A fresh reviewer reads only the issue, the change, and the rules of the project, and raises only a finding the user would act on, never one that is unlikely or that fails safe. The loop ends when no blocker is left and no remaining finding is worth another round. When findings come back in one area, Claude questions its method instead of adding a guard, and after 3 rounds it stops and asks you. The reviewer classes each finding as a blocker, in scope (same root cause as the issue, or in the code it touches), or out of scope (a different root cause). Claude fixes the blockers and the in-scope findings worth their cost in the same branch, and keeps the out-of-scope findings for `ship`, which files a follow-up issue only for a reproduced bug or a feature of high value with a new root cause.
 
 ## Credits
 
