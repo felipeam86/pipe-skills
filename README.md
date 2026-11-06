@@ -133,33 +133,34 @@ stateDiagram-v2
     s6: Building in steps
     s7: Rewriting the plan
     s8: Under review
-    s9: Stopped, reported to you
+    s9: Built by you, as in the by-hand chart
+    s10: Stopped, reported to you
   }
-  state "Backlog" as s10 {
-    s11: Judged not worth it
+  state "Backlog" as s11 {
+    s12: Judged not worth it
   }
-  state "In Review" as s12 {
-    s13: At the merge gate
+  state "In Review" as s13 {
+    s14: At the merge gate
   }
-  state "Done" as s14 {
-    s15: Merged and closed
+  state "Done" as s15 {
+    s16: Merged and closed
   }
   [*] --> s1
   s1 --> s3: you give the go, Claude files the issue
   s3 --> s4: /autonomous-loop skips it, /assess says not current
   s6 --> s7: a discovery changes the plan
   s6 --> s8: the steps are committed, a fresh reviewer starts
-  s11 --> s3: you move it back to Todo
-  s11 --> s6: you run /implement
-  s4 --> s6: you run /implement
+  s12 --> s3: you move it back to Todo
+  s12 --> s9: you run /implement
+  s4 --> s9: you run /implement
   s7 --> s6: the issue is rewritten (/final-state)
   s8 --> s6: the review finds a blocker or an in-scope bug
-  s8 --> s13: the review is clean
-  s8 --> s9: a blocker comes back, or 10 rounds pass
-  s13 --> s15: the subagent ships it [in /autonomous-loop]
-  s9 --> s15: the subagent ships it [in /autonomous-loop]
+  s8 --> s14: the review is clean
+  s8 --> s10: a blocker comes back, or 10 rounds pass
+  s14 --> s16: the subagent ships it [in /autonomous-loop]
+  s10 --> s16: the subagent ships it [in /autonomous-loop]
   s2 --> s6: /autonomous-loop takes it, /assess says current
-  s2 --> s11: the subagent judges it not worth its cost
+  s2 --> s12: the subagent judges it not worth its cost
   classDef blue fill:#e6f0ff,stroke:#2f6fd6,color:#173a73
   classDef orange fill:#fff0e0,stroke:#e07a10,color:#7a3f05
   classDef yellow fill:#fff8d6,stroke:#c9a400,color:#5c4b00
@@ -171,9 +172,10 @@ stateDiagram-v2
   class s7 orange
   class s8 yellow
   class s9 orange
-  class s11 blue
-  class s13 yellow
-  class s15 teal
+  class s10 orange
+  class s12 blue
+  class s14 yellow
+  class s16 teal
 ```
 
 ### With `assess` or `sweep`
