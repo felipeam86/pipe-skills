@@ -87,7 +87,8 @@ TheReviewDoesNotConverge ==
 
 YouAnswerAndTheWorkContinues ==
     /\ sub = "stuck" /\ mode = "manual" /\ Move("In Progress", "building")
-    /\ UNCHANGED rest
+    /\ warned' = FALSE
+    /\ UNCHANGED <<mode, prdGo, filed, reviewClean, shipGo, merged, isFollowup, followups, versionBumped, verdictGo, verdictApplied>>
 
 \* ship files a follow-up only when the closed issue is not itself a follow-up.
 Ship ==

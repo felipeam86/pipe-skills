@@ -187,7 +187,6 @@ stateDiagram-v2
   s13 --> s14: you run /ship
   s14 --> s10: you answer, the work continues
   s14 --> s22: you give the go anyway
-  s12 --> s14: 3 rounds pass, or the method needs you, Claude asks you
   classDef purple fill:#f1e8ff,stroke:#7c4dcc,color:#3d2370
   classDef blue fill:#e6f0ff,stroke:#2f6fd6,color:#173a73
   classDef tan fill:#f5ecdc,stroke:#a6793a,color:#5a3e14
