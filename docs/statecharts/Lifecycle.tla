@@ -145,7 +145,8 @@ Spec == Init /\ [][Next]_vars
 
 \* The charts of README.md: each config keeps one flow. Lifecycle.cfg checks the rules on every flow and gives no chart.
 MainPath == mode' /= "auto" /\ sub' \notin {"skipped", "verdicts", "backlog"}
-LoopPath == mode' /= "manual" /\ sub' /= "verdicts"
+\* The loop chart keeps the one step by which you take over an issue that the loop left, and stops there.
+LoopPath == sub' /= "verdicts" /\ (mode' = "manual" => (mode = "none" /\ sub \in {"backlog", "skipped"}))
 AssessPath == mode' = "none"
 
 NoMergeBeforeCleanReviewUnlessYouSawAWarningOrRanTheLoop == merged => (reviewClean \/ warned \/ mode = "auto")

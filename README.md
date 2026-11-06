@@ -115,7 +115,7 @@ stateDiagram-v2
 
 ### With `autonomous-loop`
 
-The loop takes each `Todo` issue without you. It checks the issue with `assess` first, and it ships without your go.
+The loop takes each `Todo` issue without you. It checks the issue with `assess` first, and it ships without your go. You take back an issue that it skipped or moved to `Backlog`.
 
 ```mermaid
 ---
@@ -150,6 +150,8 @@ stateDiagram-v2
   s6 --> s7: a discovery changes the plan
   s6 --> s8: the steps are committed, a fresh reviewer starts
   s11 --> s3: you move it back to Todo
+  s11 --> s6: you run /implement
+  s4 --> s6: you run /implement
   s7 --> s6: the issue is rewritten (/final-state)
   s8 --> s6: the review finds a blocker or an in-scope bug
   s8 --> s13: the review is clean
