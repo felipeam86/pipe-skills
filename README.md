@@ -41,13 +41,13 @@ Working style:
 
 ## How the skills fit together
 
-One piece of work moves through the states of its issue in the tracker. Each arrow names who acts, and the skill when one runs. Three charts show the three ways to drive the work. `setup` is not on the charts, because it runs once before the first issue, and `promote-rule` is not on them, because it can run at any time, when you correct Claude. The charts come from one model, and TLC checks its rules on all the paths together; the model and the rules are in `docs/statecharts`.
+One piece of work moves through the states of its issue in the tracker. Each arrow names who acts, and the skill when one runs. `setup` is not on the charts, because it runs once before the first issue, and `promote-rule` is not on them, because it can run at any time, when you correct Claude. The model behind the charts, and the rules that TLC checks on it, are in `docs/statecharts`.
 
 Colors: purple = talk, blue = specify, orange = build, yellow = review, teal = ship, tan = sweep.
 
-### By hand
+### The main workflow
 
-The main workflow, with the main skills: from an idea to an issue, then to a merge.
+The path that you drive by hand, with the main skills: from an idea to an issue, then to a merge.
 
 ```mermaid
 ---
@@ -68,13 +68,12 @@ stateDiagram-v2
     s9: Rewriting the plan
     s10: Under review
     s11: Stopped, reported to you
-    s12: Warned the review is not clean
   }
-  state "In Review" as s13 {
-    s14: At the merge gate
+  state "In Review" as s12 {
+    s13: At the merge gate
   }
-  state "Done" as s15 {
-    s16: Merged and closed
+  state "Done" as s14 {
+    s15: Merged and closed
   }
   [*] --> s1
   s1 --> s2: you ask for an opinion (/advise)
@@ -89,11 +88,9 @@ stateDiagram-v2
   s8 --> s10: the steps are committed, a fresh reviewer starts
   s9 --> s8: the issue is rewritten (/final-state)
   s10 --> s8: the review finds a blocker or an in-scope bug
-  s10 --> s14: the review is clean
+  s10 --> s13: the review is clean
   s10 --> s11: a blocker comes back, or 10 rounds pass
-  s14 --> s16: you run /ship and give the go
-  s11 --> s12: you run /ship
-  s12 --> s16: you give the go anyway
+  s13 --> s15: you run /ship and give the go
   classDef purple fill:#f1e8ff,stroke:#7c4dcc,color:#3d2370
   classDef blue fill:#e6f0ff,stroke:#2f6fd6,color:#173a73
   classDef orange fill:#fff0e0,stroke:#e07a10,color:#7a3f05
@@ -108,128 +105,109 @@ stateDiagram-v2
   class s9 orange
   class s10 yellow
   class s11 orange
-  class s12 orange
-  class s14 yellow
-  class s16 teal
+  class s13 yellow
+  class s15 teal
 ```
 
-### With `autonomous-loop`
+### The full lifecycle
 
-The loop takes each `Todo` issue without you. It checks the issue with `assess` first, and it ships without your go. You take back an issue that it skipped or moved to `Backlog`.
+Everything else that can happen to an issue: `autonomous-loop` runs the work without you, `assess` and `sweep` check a waiting issue against the code, and `ship` warns you when the review is not clean.
 
 ```mermaid
 ---
-title: "The work of /autonomous-loop"
+title: "One piece of work, from idea to merge"
 ---
 stateDiagram-v2
   state "No issue yet" as s0 {
-    s1: Written with /prd
+    s1: Idea
+    s2: Getting an opinion
+    s3: Draft shown to you
+    s4: Being interviewed
   }
-  state "Todo" as s2 {
-    s3: Waiting
-    s4: Skipped, verdict in the loop report
+  state "Todo" as s5 {
+    s6: Waiting
+    s7: Skipped, verdict in the loop report
+    s8: Verdicts shown to you
   }
-  state "In Progress" as s5 {
-    s6: Building in steps
-    s7: Rewriting the plan
-    s8: Under review
-    s9: Built by you, as in the by-hand chart
-    s10: Stopped, reported to you
+  state "In Progress" as s9 {
+    s10: Building in steps
+    s11: Rewriting the plan
+    s12: Under review
+    s13: Stopped, reported to you
+    s14: Warned the review is not clean
   }
-  state "Backlog" as s11 {
-    s12: Judged not worth it
+  state "Backlog" as s15 {
+    s16: Judged not worth it
+    s17: Verdicts shown to you
   }
-  state "In Review" as s13 {
-    s14: At the merge gate
+  state "Canceled" as s18 {
+    s19: Canceled
   }
-  state "Done" as s15 {
-    s16: Merged and closed
+  state "Done" as s20 {
+    s21: Closed, the code already does it
+    s22: Merged and closed
+  }
+  state "In Review" as s23 {
+    s24: At the merge gate
   }
   [*] --> s1
-  s1 --> s3: you give the go, Claude files the issue
-  s3 --> s4: /autonomous-loop skips it, /assess says not current
-  s6 --> s7: a discovery changes the plan
-  s6 --> s8: the steps are committed, a fresh reviewer starts
-  s12 --> s3: you move it back to Todo
-  s12 --> s9: you run /implement
-  s4 --> s9: you run /implement
-  s7 --> s6: the issue is rewritten (/final-state)
-  s8 --> s6: the review finds a blocker or an in-scope bug
-  s8 --> s14: the review is clean
-  s8 --> s10: a blocker comes back, or 10 rounds pass
-  s14 --> s16: the subagent ships it [in /autonomous-loop]
-  s10 --> s16: the subagent ships it [in /autonomous-loop]
-  s2 --> s6: /autonomous-loop takes it, /assess says current
-  s2 --> s12: the subagent judges it not worth its cost
+  s1 --> s2: you ask for an opinion (/advise)
+  s1 --> s3: you run /prd
+  s1 --> s4: you ask for an interview (/interview)
+  s2 --> s3: you run /prd
+  s2 --> s4: you ask for an interview (/interview)
+  s3 --> s6: you give the go, Claude files the issue
+  s4 --> s3: you run /prd
+  s6 --> s10: /autonomous-loop takes it, /assess says current or you run /implement
+  s6 --> s16: the subagent judges it not worth its cost
+  s6 --> s7: /autonomous-loop skips it, /assess says not current
+  s6 --> s8: you run /assess or /sweep
+  s10 --> s11: a discovery changes the plan
+  s10 --> s12: the steps are committed, a fresh reviewer starts
+  s16 --> s6: you move it back to Todo
+  s16 --> s10: you run /implement
+  s16 --> s17: you run /assess or /sweep
+  s7 --> s10: /autonomous-loop takes it, /assess says current or you run /implement
+  s7 --> s16: the subagent judges it not worth its cost
+  s7 --> s8: you run /assess or /sweep
+  s8 --> s6: you reject it or you approve current or drifted
+  s8 --> s19: you approve superseded or obsolete
+  s8 --> s21: you approve done
+  s11 --> s10: the issue is rewritten (/final-state)
+  s12 --> s10: the review finds a blocker or an in-scope bug
+  s12 --> s24: the review is clean
+  s12 --> s13: a blocker comes back, or 10 rounds pass
+  s17 --> s16: you reject it or you approve current or drifted
+  s17 --> s19: you approve superseded or obsolete
+  s17 --> s21: you approve done
+  s24 --> s22: the subagent ships it [in /autonomous-loop] or you run /ship and give the go
+  s13 --> s22: the subagent ships it [in /autonomous-loop]
+  s13 --> s14: you run /ship
+  s14 --> s22: you give the go anyway
+  classDef purple fill:#f1e8ff,stroke:#7c4dcc,color:#3d2370
   classDef blue fill:#e6f0ff,stroke:#2f6fd6,color:#173a73
   classDef orange fill:#fff0e0,stroke:#e07a10,color:#7a3f05
   classDef yellow fill:#fff8d6,stroke:#c9a400,color:#5c4b00
   classDef teal fill:#def7f3,stroke:#1a9e8f,color:#0b4f47
-  class s1 blue
-  class s3 blue
-  class s4 blue
-  class s6 orange
-  class s7 orange
-  class s8 yellow
-  class s9 orange
-  class s10 orange
-  class s12 blue
-  class s14 yellow
-  class s16 teal
-```
-
-### With `assess` or `sweep`
-
-A waiting issue is checked against the code, and nothing changes before your go.
-
-```mermaid
----
-title: "A waiting issue under /assess or /sweep"
----
-stateDiagram-v2
-  state "No issue yet" as s0 {
-    s1: Written with /prd
-  }
-  state "Todo" as s2 {
-    s3: Waiting
-    s4: Skipped, verdict in the loop report
-    s5: Verdicts shown to you
-  }
-  state "Backlog" as s6 {
-    s7: Judged not worth it
-    s8: Verdicts shown to you
-  }
-  state "Canceled" as s9 {
-    s10: Canceled
-  }
-  state "Done" as s11 {
-    s12: Closed, the code already does it
-  }
-  [*] --> s1
-  s1 --> s3: you give the go, Claude files the issue
-  s3 --> s7: the subagent judges it not worth its cost
-  s3 --> s4: /autonomous-loop skips it, /assess says not current
-  s3 --> s5: you run /assess or /sweep
-  s7 --> s3: you move it back to Todo
-  s7 --> s8: you run /assess or /sweep
-  s4 --> s7: the subagent judges it not worth its cost
-  s4 --> s5: you run /assess or /sweep
-  s5 --> s3: you reject it or you approve current or drifted
-  s5 --> s10: you approve superseded or obsolete
-  s5 --> s12: you approve done
-  s8 --> s7: you reject it or you approve current or drifted
-  s8 --> s10: you approve superseded or obsolete
-  s8 --> s12: you approve done
-  classDef blue fill:#e6f0ff,stroke:#2f6fd6,color:#173a73
   classDef tan fill:#f5ecdc,stroke:#a6793a,color:#5a3e14
-  class s1 blue
+  class s1 purple
+  class s2 purple
   class s3 blue
-  class s4 blue
-  class s5 tan
+  class s4 purple
+  class s6 blue
   class s7 blue
   class s8 tan
-  class s10 tan
-  class s12 tan
+  class s10 orange
+  class s11 orange
+  class s12 yellow
+  class s13 orange
+  class s14 orange
+  class s16 blue
+  class s17 tan
+  class s19 tan
+  class s21 tan
+  class s22 teal
+  class s24 yellow
 ```
 
 ## Review bar
