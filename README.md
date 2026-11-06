@@ -41,7 +41,77 @@ Working style:
 
 ## How the skills fit together
 
-One piece of work moves through the states of its issue in the tracker. Each arrow names who acts, and the skill when one runs. `setup` is not on the chart, because it runs once before the first issue, and `promote-rule` is not on it, because it can run at any time, when you correct Claude. The model behind the chart, and the rules that TLC checks on it, are in `docs/statecharts`.
+One piece of work moves through the states of its issue in the tracker. Each arrow names who acts, and the skill when one runs. `setup` is not on the charts, because it runs once before the first issue, and `promote-rule` is not on them, because it can run at any time, when you correct Claude. The model behind the charts, and the rules that TLC checks on it, are in `docs/statecharts`.
+
+Colors: purple = talk, blue = specify, orange = build, yellow = review, teal = ship, tan = sweep.
+
+### The main workflow
+
+The path that you drive by hand, with the main skills: from an idea to an issue, then to a merge.
+
+```mermaid
+---
+title: "The main workflow, by hand"
+---
+stateDiagram-v2
+  state "No issue yet" as s0 {
+    s1: Idea
+    s2: Getting an opinion
+    s3: Draft shown to you
+    s4: Being interviewed
+  }
+  state "Todo" as s5 {
+    s6: Waiting
+  }
+  state "In Progress" as s7 {
+    s8: Building in steps
+    s9: Rewriting the plan
+    s10: Under review
+    s11: Stopped, reported to you
+  }
+  state "In Review" as s12 {
+    s13: At the merge gate
+  }
+  state "Done" as s14 {
+    s15: Merged and closed
+  }
+  [*] --> s1
+  s1 --> s2: you ask for an opinion (/advise)
+  s1 --> s3: you run /prd
+  s1 --> s4: you ask for an interview (/interview)
+  s2 --> s3: you run /prd
+  s2 --> s4: you ask for an interview (/interview)
+  s3 --> s6: you give the go, Claude files the issue
+  s4 --> s3: you run /prd
+  s6 --> s8: you run /implement
+  s8 --> s9: a discovery changes the plan
+  s8 --> s10: the steps are committed, a fresh reviewer starts
+  s9 --> s8: the issue is rewritten (/final-state)
+  s10 --> s8: the review finds a blocker or an in-scope bug
+  s10 --> s13: the review is clean
+  s10 --> s11: a blocker comes back, or 10 rounds pass
+  s13 --> s15: you run /ship and give the go
+  classDef purple fill:#f1e8ff,stroke:#7c4dcc,color:#3d2370
+  classDef blue fill:#e6f0ff,stroke:#2f6fd6,color:#173a73
+  classDef orange fill:#fff0e0,stroke:#e07a10,color:#7a3f05
+  classDef yellow fill:#fff8d6,stroke:#c9a400,color:#5c4b00
+  classDef teal fill:#def7f3,stroke:#1a9e8f,color:#0b4f47
+  class s1 purple
+  class s2 purple
+  class s3 blue
+  class s4 purple
+  class s6 blue
+  class s8 orange
+  class s9 orange
+  class s10 yellow
+  class s11 orange
+  class s13 yellow
+  class s15 teal
+```
+
+### The full lifecycle
+
+Everything else that can happen to an issue: `autonomous-loop` runs the work without you, `assess` and `sweep` check a waiting issue against the code, and `ship` warns you when the review is not clean.
 
 ```mermaid
 ---
@@ -139,8 +209,6 @@ stateDiagram-v2
   class s22 teal
   class s24 yellow
 ```
-
-Colors: purple = talk, blue = specify, orange = build, yellow = review, teal = ship, tan = sweep.
 
 ## Review bar
 

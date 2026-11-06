@@ -143,6 +143,9 @@ Next ==
 
 Spec == Init /\ [][Next]_vars
 
+\* Lifecycle-main.cfg keeps only the main path that you drive by hand, for the first chart of README.md.
+MainPath == mode' /= "auto" /\ sub' \notin {"skipped", "verdicts", "backlog"} /\ ~warned'
+
 NoMergeBeforeCleanReviewUnlessYouSawAWarningOrRanTheLoop == merged => (reviewClean \/ warned \/ mode = "auto")
 NoMergeWithoutYourGo == merged => (shipGo \/ mode = "auto")
 NoIssueBeforeYourGo == filed => prdGo
