@@ -27,9 +27,9 @@ Report the state and the plan first. Wait for a go before a step that can lose w
    - When no checkout holds it, run `git fetch origin <target>:<target>`.
    - When `git rev-list origin/<target>..<target>` lists commits, no fast-forward can bring the target to its remote: `merge --ff-only` does nothing, and `fetch` refuses. Report those commits, the commits of `git rev-list <target>..origin/<target>` when the remote also moved, and the cause: with a pull request, no step of ship commits to the target, so these are commits of the user; without one, the squash commit of step 2 is not pushed.
    - When the fast-forward fails for another reason, report it, for example the files of the uncommitted change that blocks it.
-   - When step 5 detached the main checkout, run `git switch --detach origin/<target>` in it, so that it is not on an old commit.
+   - When step 5 detached the main checkout, run `git switch --detach origin/<target>` in it, so that it is not on an old commit. When an uncommitted change blocks the switch, report its files.
 7. Check the end state, and report each check with its result:
-   - Name the branch of the main checkout. When it is detached, say so, and tell the user to check out a branch before a commit, because a commit on a detached HEAD has no branch to hold it.
+   - Name the branch of the main checkout. When it is detached, say so, say whether `git rev-parse HEAD` gives the commit of `origin/<target>`, and tell the user to check out a branch before a commit, because a commit on a detached HEAD has no branch to hold it.
    - With a remote, `git rev-parse <target>` and `git rev-parse origin/<target>` give the same commit.
    - `git branch --list <branch>` gives nothing, and with a remote, `git branch -r --list origin/<branch>` and `git ls-remote origin refs/heads/<branch>` give nothing.
    - List the local branches whose upstream is gone, which `git branch -vv` marks `: gone]`. Do not delete them: such a branch can hold work that is not on the remote.
