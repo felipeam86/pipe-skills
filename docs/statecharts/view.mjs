@@ -49,6 +49,7 @@ const labels = {
   TheFindingsComeBackInOneArea: "findings come back in one area, Claude changes its method",
   TheReviewIsClean: "no finding is worth another round",
   TheReviewDoesNotConverge: "3 rounds pass, or the method needs you, Claude asks you",
+  YouAnswerAndTheWorkContinues: "you answer, the work continues",
   YouRunShipAndGiveTheGo: "you run /ship and give the go",
   TheSubagentShipsIt: "the subagent ships it [in /autonomous-loop]",
   ClaudeWarnsTheReviewIsNotClean: "you run /ship",

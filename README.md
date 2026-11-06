@@ -91,6 +91,7 @@ stateDiagram-v2
   s10 --> s13: no finding is worth another round
   s10 --> s11: 3 rounds pass, or the method needs you, Claude asks you
   s13 --> s15: you run /ship and give the go
+  s11 --> s8: you answer, the work continues
   classDef purple fill:#f1e8ff,stroke:#7c4dcc,color:#3d2370
   classDef blue fill:#e6f0ff,stroke:#2f6fd6,color:#173a73
   classDef orange fill:#fff0e0,stroke:#e07a10,color:#7a3f05
@@ -182,14 +183,17 @@ stateDiagram-v2
   s17 --> s21: you approve done
   s24 --> s22: the subagent ships it [in /autonomous-loop] or you run /ship and give the go
   s13 --> s22: the subagent ships it [in /autonomous-loop]
+  s13 --> s10: you answer, the work continues
   s13 --> s14: you run /ship
+  s14 --> s10: you answer, the work continues
   s14 --> s22: you give the go anyway
+  s12 --> s14: 3 rounds pass, or the method needs you, Claude asks you
   classDef purple fill:#f1e8ff,stroke:#7c4dcc,color:#3d2370
   classDef blue fill:#e6f0ff,stroke:#2f6fd6,color:#173a73
+  classDef tan fill:#f5ecdc,stroke:#a6793a,color:#5a3e14
   classDef orange fill:#fff0e0,stroke:#e07a10,color:#7a3f05
   classDef yellow fill:#fff8d6,stroke:#c9a400,color:#5c4b00
   classDef teal fill:#def7f3,stroke:#1a9e8f,color:#0b4f47
-  classDef tan fill:#f5ecdc,stroke:#a6793a,color:#5a3e14
   class s1 purple
   class s2 purple
   class s3 blue

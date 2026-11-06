@@ -85,6 +85,10 @@ TheReviewDoesNotConverge ==
     /\ sub = "reviewing" /\ Move("In Progress", "stuck")
     /\ UNCHANGED rest
 
+YouAnswerAndTheWorkContinues ==
+    /\ sub = "stuck" /\ mode = "manual" /\ Move("In Progress", "building")
+    /\ UNCHANGED rest
+
 \* ship files a follow-up only when the closed issue is not itself a follow-up.
 Ship ==
     /\ Move("Done", "done")
@@ -140,7 +144,7 @@ Next ==
     \/ YouAskForAdvice \/ YouAskForAnInterview \/ YouRunPrd \/ YouGiveTheGoToFile
     \/ YouRunImplement \/ TheLoopTakesIt \/ TheLoopSkipsAStaleIssue \/ TheSubagentJudgesItNotWorthIt \/ YouMoveItBackToTodo
     \/ ADiscoveryChangesThePlan \/ TheIssueIsRewritten \/ TheStepsAreCommitted
-    \/ TheReviewFindsWorkToFix \/ TheFindingsComeBackInOneArea \/ TheReviewIsClean \/ TheReviewDoesNotConverge
+    \/ TheReviewFindsWorkToFix \/ TheFindingsComeBackInOneArea \/ TheReviewIsClean \/ TheReviewDoesNotConverge \/ YouAnswerAndTheWorkContinues
     \/ YouRunShipAndGiveTheGo \/ TheSubagentShipsIt
     \/ ClaudeWarnsTheReviewIsNotClean \/ YouGiveTheGoAnyway
     \/ YouRunAssessOrSweep \/ YouApproveCurrentOrDrifted \/ YouApproveDone \/ YouApproveSupersededOrObsolete \/ YouRejectTheVerdict
