@@ -24,7 +24,9 @@ Sections: **Description** (one line), **Goal**, **Business impact**, **Success c
 
 The case, written when the issue is planned: **Description** (one line), **Goal**, **Business impact**, **Success criteria** (how you prove it), **Risks**.
 
-The design, added when the work starts: **State** (what exists today), **Options** (when there is more than one path), **Plan** (the steps in order, which `pipe-skills:implement` commits one at a time), **Context** (what else a reader needs).
+The issue says what the work must achieve and what it is worth, not how to build it. The **Business impact** gives the weight of the work: what it costs today, how often, and for whom, because `implement` sizes the change and `review` sizes its bar from it. The **Success criteria** say what done looks like. Name a method, a plan, or a list of edge cases only when the user decided it, and mark it as decided, because each prescribed guard is more for the implementer to build and for the reviewer to attack.
+
+The design, added when the work starts: **State** (what exists today), **Options** (when there is more than one path), **Plan** (only the steps the user decided, in order), **Context** (the decisions and what else a reader needs).
 
 Drop a section that holds nothing. File the issue in its outcome, assigned to the user, in state `Todo`, with its priority and its "blocked by" relations, so that `pipe-skills:autonomous-loop` takes the issues in the correct order. Give the identifier and the URL, and offer to run `pipe-skills:implement`.
 
