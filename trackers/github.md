@@ -19,7 +19,8 @@ The priority is the `Priority` field: its options in their order, the first one 
 
 ## Operations
 
-- **Read an issue.** `gh issue view <n> --json number,title,body,state,url,comments,milestone,projectItems`. The state is `.projectItems[].status.name` of the item in the project.
+- **Read an issue.** `gh issue view <n> --json number,title,body,state,url,createdAt,comments,milestone,projectItems`. The state is `.projectItems[].status.name` of the item in the project.
+- **Hash the description.** `gh issue view <n> --json body --jq .body | shasum -a 256 | cut -c1-12`.
 - **File an issue.** `gh issue create --title <title> --body-file <file> --assignee @me --milestone <name>`, then set the state, set `Priority` when the project has the field, and add each "blocked by" relation. Read the state back, because the `Item added to project` workflow of a project can set its own state after yours. Give the number and the URL.
 - **Edit the description.** `gh issue edit <n> --body-file <file>`.
 - **Comment.** `gh issue comment <n> --body-file <file>`.
@@ -34,5 +35,6 @@ The priority is the `Priority` field: its options in their order, the first one 
 - **Link a follow-up.** The first line of the new issue names the closed issue as `#<n>`, which GitHub links both ways.
 - **Find the blockers.** `gh api repos/{owner}/{repo}/issues/<n>/dependencies/blocked_by --jq '[.[] | select(.state == "open") | .number]'`.
 - **List the queue.** `gh project item-list <number> --owner <owner> --query 'is:issue is:open status:Ready repo:<repository>' --limit 500 --format json`, with the option name of `Todo`, in double quotes when it holds a space. Each item holds `content.number`, and one key per field in lowercase, such as `status` and `priority`, when the field has a value. Order by the `Priority` field, in the order of its options in `field-list`, then the items with no priority. Within one priority, the lowest issue number first, because it is the oldest. Without a `Priority` field, order by issue number only. Leave out a parent issue, which has `gh api repos/{owner}/{repo}/issues/<n> --jq .sub_issues_summary.total` above 0: its sub-issues are the work.
+- **List the backlog.** `gh project item-list <number> --owner <owner> --query 'is:issue is:open status:Backlog,Ready repo:<repository>' --limit 500 --format json`, with the option names of `Backlog` and `Todo`, each in double quotes when it holds a space.
 - **Cancel.** `gh issue close <n> --reason "not planned"`, or `--duplicate-of <m>` for a duplicate.
 - **Close.** `gh issue close <n> --reason completed`, then set the state `Done`. Post a comment with `gh issue comment`, never with `gh issue close --comment`: the `Auto-close issue` workflow of a project closes an issue when its state becomes `Done`, and `gh issue close` on a closed issue drops its comment.

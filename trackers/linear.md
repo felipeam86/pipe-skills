@@ -14,6 +14,7 @@ Use the tools of the Linear MCP server; load them with ToolSearch first. The sta
 ## Operations
 
 - **Read an issue.** `get_issue` with `includeRelations: true`, and `list_comments` with `orderBy: "createdAt"`.
+- **Hash the description.** Read the `description` of `get_issue`, write it unchanged to a new file with the Write tool, and run `shasum -a 256 <file> | cut -c1-12`.
 - **File an issue.** `save_issue` with `team`, `project` (the project of the tracker line, or the outcome in the initiative form), `milestone` (its name, in the project form only), `assignee: "me"`, `state`, `priority` (1 `Urgent`, 2 `High`, 3 `Medium`, 4 `Low`), `blockedBy: ["ACM-40"]`, and `parentId` (the parent identifier) on a child of a parent issue. Give the identifier and the URL. When Linear says the project is not in the team, read the team of the project with `list_projects`.
 - **Edit the description.** `save_issue` with `id` and `patch: [{op: "replace", old_string, new_string}]`, or with `description` for a full rewrite. When the patch fails, read the issue again and copy the text exactly.
 - **Comment.** `save_comment` with `issueId` and `body`.
@@ -27,4 +28,5 @@ Use the tools of the Linear MCP server; load them with ToolSearch first. The sta
 - **Link a follow-up.** `relatedTo: ["ACM-42"]` on the new issue, and the `project` of the closed issue, which `get_issue` gives.
 - **Find the blockers.** The `relations.blockedBy` of `get_issue`, which holds no state: read each blocker with `get_issue`. A blocker is open when its state is not `Done`, `Canceled`, or `Duplicate`.
 - **List the queue.** `list_issues` with `project` (in the initiative form, the outcome that the user names), `state: "Todo"`, `limit: 250`, and `fields` that hold `priority` and `createdAt`. Leave out a parent issue that has children: its children are the work. Order by priority: `Urgent`, `High`, `Medium`, `Low`, then `No priority` (0), and the oldest first within one priority.
+- **List the backlog.** `list_issues` with `project`, `limit: 250`, once with `state: "Backlog"` and once with `state: "Todo"`. In the initiative form, do this for each outcome of **List the outcomes**.
 - **Close.** Set the state `Done`.

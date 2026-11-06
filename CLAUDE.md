@@ -6,9 +6,9 @@
 
 ## Statechart
 
-- The statechart in `docs/statecharts` and the skills describe one behavior, so they change in the same commit, in both directions: a skill change that adds, removes, or moves a step, a state, or a rule changes `Lifecycle.tla` and `view.mjs`, and a model change changes the skill text it describes. Run TLC with the command in `docs/statecharts/README.md`, and paste the new chart into `README.md`, because a chart that drifts from the skills tells the user a wrong story.
-- When you put a new `chart.mmd` into `README.md`, remove its `Legend` block and its `class lg` lines, and add one `classDef` line for each phase color, with the colors of the chart in `README.md`. The command always writes the Legend, which Mermaid cannot place at a fixed position, so `README.md` gives the colors in one line of text, and the command writes no `classDef` for the phase colors.
-- Each time you change a skill, read the model, and say in the commit message whether the chart changed, so that a skill change that skips the model shows in the history.
+- The statechart in `docs/statecharts` and the skills describe one behavior, so they change in the same commit, in both directions: a skill change that adds, removes, or moves a step, a state, or a rule changes `Lifecycle.tla` and `view.mjs`, and a model change changes the skill text it describes. Run TLC with the command for each chart in `docs/statecharts/README.md`, and paste both new charts into `README.md`, because a chart that drifts from the skills tells the user a wrong story.
+- When you put a new `chart.mmd` into `README.md`, remove its `Legend` block and its `class lg` lines, and add one `classDef` line for each phase color that the chart uses, with the colors of the chart in `README.md`. The command always writes the Legend, which Mermaid cannot place at a fixed position, so `README.md` gives the colors in one line of text, and the command writes no `classDef` for the phase colors.
+- Each time you change a skill, read the model, and say in the commit message whether each chart changed, so that a skill change that skips the model shows in the history.
 
 ## Skills
 

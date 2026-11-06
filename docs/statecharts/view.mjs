@@ -11,18 +11,25 @@ const where = {
   stuck: ["In Progress", "Stopped, reported to you"],
   gate: ["In Review", "At the merge gate"],
   done: ["Done", "Merged and closed"],
+  closed: ["Done", "Closed, the code already does it"],
+  canceled: ["Canceled", "Canceled"],
+  skipped: ["Todo", "Skipped, verdict in the loop report"],
 };
-export const state = (v) =>
-  v.sub === "stuck" && v.warned ? ["In Progress", "Warned the review is not clean"] : where[v.sub];
+export const state = (v) => {
+  if (v.sub === "stuck" && v.warned) return ["In Progress", "Warned the review is not clean"];
+  if (v.sub === "verdicts") return [v.status, "Verdicts shown to you"];
+  return where[v.sub];
+};
 
 const phase = {
   idea: "talk", advice: "talk", interview: "talk", draft: "specify",
-  waiting: "specify", backlog: "specify",
+  waiting: "specify", backlog: "specify", skipped: "specify",
   building: "build", replanning: "build", stuck: "build",
   reviewing: "review", gate: "review", done: "ship",
+  verdicts: "sweep", closed: "sweep", canceled: "sweep",
 };
 export const group = (v) => phase[v.sub];
-export const colors = { talk: "purple", specify: "blue", build: "orange", review: "yellow", ship: "teal" };
+export const colors = { talk: "purple", specify: "blue", build: "orange", review: "yellow", ship: "teal", sweep: "tan" };
 export const title = "One piece of work, from idea to merge";
 
 const labels = {
@@ -31,7 +38,8 @@ const labels = {
   YouRunPrd: "you run /prd",
   YouGiveTheGoToFile: "you give the go, Claude files the issue",
   YouRunImplement: "you run /implement",
-  TheLoopTakesIt: "/autonomous-loop takes it",
+  TheLoopTakesIt: "/autonomous-loop takes it, /assess says current",
+  TheLoopSkipsAStaleIssue: "/autonomous-loop skips it, /assess says not current",
   TheSubagentJudgesItNotWorthIt: "the subagent judges it not worth its cost",
   YouMoveItBackToTodo: "you move it back to Todo",
   ADiscoveryChangesThePlan: "a discovery changes the plan",
@@ -44,6 +52,11 @@ const labels = {
   TheSubagentShipsIt: "the subagent ships it [in /autonomous-loop]",
   ClaudeWarnsTheReviewIsNotClean: "you run /ship",
   YouGiveTheGoAnyway: "you give the go anyway",
+  YouRunAssessOrSweep: "you run /assess or /sweep",
+  YouApproveCurrentOrDrifted: "you approve current or drifted",
+  YouApproveDone: "you approve done",
+  YouApproveSupersededOrObsolete: "you approve superseded or obsolete",
+  YouRejectTheVerdict: "you reject it",
   Finished: null,
 };
 export const step = (action) => labels[action];
