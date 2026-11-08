@@ -10,7 +10,7 @@ The user is about to leave, and no one answers until they return. A blocker foun
 
 Before the user leaves:
 
-- Prove that you can do each kind of operation the work needs, by doing it once for real, because an access that only looks correct fails when no one can fix it.
+- Make sure that each access the work needs works for the operation it must do, with the cheapest test that would fail the same way, because an access that only looks correct fails when no one can fix it.
 - Ask every question that only the user can answer, in one message, with the options and your recommendation. Wait for the answers, unless the user said when they started this skill that they cannot answer.
 - Say what you checked, what is missing, and what can still stop you.
 - When nothing more is needed from the user, say so explicitly: tell them they can go.
