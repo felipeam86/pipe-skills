@@ -12,6 +12,7 @@
 
 ## Skills
 
+- A skill gives the model clear, short instructions on how to behave and why, and leaves the method to the model, because a model follows short, clear instructions well, and each step that the skill prescribes is more text to maintain and to review. The cleanup of `ship` in #8 is the case.
 - A skill reads the values of a project, such as its Linear team and project, from the `CLAUDE.md` of that project and never holds them, because the plugin serves every project that installs it.
 - A skill that merges, closes an issue, or deletes a branch sets `disable-model-invocation: true`, so that only the user starts it. `ship` and `autonomous-loop` are the case.
 - A skill names another skill as `pipe-skills:<name>`, and a subagent prompt reads a skill at `${CLAUDE_PLUGIN_ROOT}/skills/<name>/SKILL.md`, so that the reference holds wherever the plugin is installed.
