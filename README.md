@@ -2,7 +2,7 @@
 
 A Claude Code plugin that runs a spec-to-ship pipeline on Linear or on GitHub Issues. An issue is the specification. Claude implements it in validated, committed steps, has a fresh reviewer check the work until no finding is worth another round, and stops at the merge gate. When you are ready, Claude squash-merges the work and closes the issue. It can also work through a whole `Todo` queue on its own, one issue after another.
 
-The plugin also has the working-style skills that the pipeline relies on: give an opinion without changing anything, interview you for a spec, keep documents at their final state, and turn corrections into lasting rules.
+The plugin also has the working-style skills that the pipeline relies on: give an opinion without changing anything, interview you for a spec, keep documents at their final state, turn corrections into lasting rules, and prepare work that Claude does alone while you are away.
 
 ## Install
 
@@ -38,10 +38,11 @@ Working style:
 | `interview` | Interviews you in depth to write a specification. | `/pipe-skills:interview the onboarding redesign` |
 | `final-state` | Edits a document, an issue, or a comment so that it states only the settled decision, removes traces of previous ones, and keeps the rationale. | `/pipe-skills:final-state docs/design.md` |
 | `promote-rule` | Turns a correction you just made into a durable rule, at the level it governs. | `/pipe-skills:promote-rule` |
+| `away` | Before you leave Claude to work alone for hours, proves each access the work needs, asks all its questions at once, and tells you when you can go. | `/pipe-skills:away migrate the app tonight; I can't answer questions` |
 
 ## How the skills fit together
 
-One piece of work moves through the states of its issue in the tracker. Each arrow names who acts, and the skill when one runs. `setup` is not on the charts, because it runs once before the first issue, and `promote-rule` is not on them, because it can run at any time, when you correct Claude. The model behind the charts, and the rules that TLC checks on it, are in `docs/statecharts`.
+One piece of work moves through the states of its issue in the tracker. Each arrow names who acts, and the skill when one runs. `setup` is not on the charts, because it runs once before the first issue, and `promote-rule` and `away` are not on them, because each can run at any time: `promote-rule` when you correct Claude, and `away` before any work you leave to Claude. The model behind the charts, and the rules that TLC checks on it, are in `docs/statecharts`.
 
 Colors: purple = talk, blue = specify, orange = build, yellow = review, teal = ship, tan = sweep.
 
