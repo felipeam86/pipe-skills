@@ -15,6 +15,10 @@ The plugin also has the working-style skills that the pipeline relies on: give a
 
 Run `/pipe-skills:setup` in the project. It asks for Linear or GitHub Issues, checks what the tracker needs, fixes what it can after your go, and writes the line of the project `CLAUDE.md` that names where the work lives. On Linear, that line names one project, or one initiative whose projects are the outcomes of the work. Both trackers use the `gh` CLI when the repository has a GitHub remote.
 
+## Session names
+
+When you type `implement`, `assess`, `review`, `ship`, or `prd` with an issue, a hook of the plugin names the session `/<skill> <ISSUE-N> - <Issue title>`, for example `/assess GH-12 - Add the away skill to prepare work that Claude does alone while the user is away`. The hook needs `python3`. For a Linear issue, it reads the title with the key in the `LINEAR_API_KEY` environment variable, and without a key the name is `/<skill> <ISSUE-N>`. A skill that Claude starts by itself, such as each issue of `autonomous-loop`, does not rename the session, because Claude Code fires the hook only on a prompt that you type.
+
 ## Skills
 
 The pipeline:

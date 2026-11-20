@@ -1,0 +1,16 @@
+{
+  "description": "Name the session after the skill and the issue it works on.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/session_title.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
