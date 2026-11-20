@@ -9,6 +9,7 @@ SKILLS = ("implement", "assess", "review", "ship", "prd")
 COMMAND = re.compile(r"^\s*/(?:pipe-skills:)?(" + "|".join(SKILLS) + r")(?:\s+(.*))?$", re.S)
 GITHUB = re.compile(r"^(?:GH-|#)?(\d+)$", re.I)
 LINEAR = re.compile(r"^[A-Z][A-Z0-9]*-\d+$", re.I)
+BRANCH = re.compile(r"^(?:(\d+)|([A-Z][A-Z0-9]*-\d+))-[a-z]", re.I)
 PR_TITLE = re.compile(r"^([A-Z][A-Z0-9]*-\d+)[\s:-]+(.+)$")
 TIMEOUT = 5
 
@@ -17,7 +18,11 @@ def argument(args):
     words = args.split()
     while words and words[0].lower() in ("update", "issue", "pr"):
         words.pop(0)
-    return words[0].rstrip(",.:;") if words else ""
+    token = words[0].rstrip(",.:;") if words else ""
+    branch = BRANCH.match(token.rsplit("/", 1)[-1])
+    if branch and not (GITHUB.match(token) or LINEAR.match(token)):
+        return f"GH-{branch.group(1)}" if branch.group(1) else branch.group(2)
+    return token
 
 
 def gh(kind, number, cwd):
