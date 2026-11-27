@@ -1,6 +1,7 @@
 const where = {
   idea: ["No issue yet", "Idea"],
   advice: ["No issue yet", "Getting an opinion"],
+  walkthrough: ["No issue yet", "Reading a walkthrough"],
   interview: ["No issue yet", "Being interviewed"],
   draft: ["No issue yet", "Draft shown to you"],
   waiting: ["Todo", "Waiting"],
@@ -22,7 +23,7 @@ export const state = (v) => {
 };
 
 const phase = {
-  idea: "talk", advice: "talk", interview: "talk", draft: "specify",
+  idea: "talk", advice: "talk", walkthrough: "talk", interview: "talk", draft: "specify",
   waiting: "specify", backlog: "specify", skipped: "specify",
   building: "build", replanning: "build", stuck: "build",
   reviewing: "review", gate: "review", done: "ship",
@@ -34,6 +35,7 @@ export const title = "One piece of work, from idea to merge";
 
 const labels = {
   YouAskForAdvice: "you ask for an opinion (/advise)",
+  YouAskForAWalkthrough: "you ask for a walkthrough (/walkthrough)",
   YouAskForAnInterview: "you ask for an interview (/interview)",
   YouRunPrd: "you run /prd",
   YouGiveTheGoToFile: "you give the go, Claude files the issue",

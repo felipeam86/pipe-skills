@@ -19,12 +19,16 @@ YouAskForAdvice ==
     /\ sub = "idea" /\ Move("none", "advice")
     /\ UNCHANGED rest
 
+YouAskForAWalkthrough ==
+    /\ sub \in {"idea", "advice"} /\ Move("none", "walkthrough")
+    /\ UNCHANGED rest
+
 YouAskForAnInterview ==
-    /\ sub \in {"idea", "advice"} /\ Move("none", "interview")
+    /\ sub \in {"idea", "advice", "walkthrough"} /\ Move("none", "interview")
     /\ UNCHANGED rest
 
 YouRunPrd ==
-    /\ sub \in {"idea", "advice", "interview"} /\ Move("none", "draft")
+    /\ sub \in {"idea", "advice", "walkthrough", "interview"} /\ Move("none", "draft")
     /\ UNCHANGED rest
 
 YouGiveTheGoToFile ==
@@ -142,7 +146,7 @@ YouRejectTheVerdict ==
 Finished == sub \in {"done", "closed", "canceled"} /\ UNCHANGED vars
 
 Next ==
-    \/ YouAskForAdvice \/ YouAskForAnInterview \/ YouRunPrd \/ YouGiveTheGoToFile
+    \/ YouAskForAdvice \/ YouAskForAWalkthrough \/ YouAskForAnInterview \/ YouRunPrd \/ YouGiveTheGoToFile
     \/ YouRunImplement \/ TheLoopTakesIt \/ TheLoopSkipsAStaleIssue \/ TheSubagentJudgesItNotWorthIt \/ YouMoveItBackToTodo
     \/ ADiscoveryChangesThePlan \/ TheIssueIsRewritten \/ TheStepsAreCommitted
     \/ TheReviewFindsWorkToFix \/ TheFindingsComeBackInOneArea \/ TheReviewIsClean \/ TheReviewDoesNotConverge \/ YouAnswerAndTheWorkContinues

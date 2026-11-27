@@ -39,6 +39,7 @@ Working style:
 | Skill | What it does | Example |
 |---|---|---|
 | `advise` | Gives an opinion or a plan, and changes no file. | `/pipe-skills:advise is this cache layer worth it?` |
+| `walkthrough` | Builds one interactive HTML report that explains a subject or prepares a decision, with hovers, progressive disclosure, and a reply that you paste back into the session. | `/pipe-skills:walkthrough the options for the cache layer` |
 | `interview` | Interviews you in depth to write a specification. | `/pipe-skills:interview the onboarding redesign` |
 | `final-state` | Edits a document, an issue, or a comment so that it states only the settled decision, removes traces of previous ones, and keeps the rationale. | `/pipe-skills:final-state docs/design.md` |
 | `promote-rule` | Turns a correction you just made into a durable rule, at the level it governs. | `/pipe-skills:promote-rule` |
@@ -64,39 +65,44 @@ stateDiagram-v2
     s2: Getting an opinion
     s3: Draft shown to you
     s4: Being interviewed
+    s5: Reading a walkthrough
   }
-  state "Todo" as s5 {
-    s6: Waiting
+  state "Todo" as s6 {
+    s7: Waiting
   }
-  state "In Progress" as s7 {
-    s8: Building in steps
-    s9: Rewriting the plan
-    s10: Under review
-    s11: Stopped, Claude asks you
+  state "In Progress" as s8 {
+    s9: Building in steps
+    s10: Rewriting the plan
+    s11: Under review
+    s12: Stopped, Claude asks you
   }
-  state "In Review" as s12 {
-    s13: At the merge gate
+  state "In Review" as s13 {
+    s14: At the merge gate
   }
-  state "Done" as s14 {
-    s15: Merged and closed
+  state "Done" as s15 {
+    s16: Merged and closed
   }
   [*] --> s1
   s1 --> s2: you ask for an opinion (/advise)
   s1 --> s3: you run /prd
   s1 --> s4: you ask for an interview (/interview)
+  s1 --> s5: you ask for a walkthrough (/walkthrough)
   s2 --> s3: you run /prd
   s2 --> s4: you ask for an interview (/interview)
-  s3 --> s6: you give the go, Claude files the issue
+  s2 --> s5: you ask for a walkthrough (/walkthrough)
+  s3 --> s7: you give the go, Claude files the issue
   s4 --> s3: you run /prd
-  s6 --> s8: you run /implement
-  s8 --> s9: a discovery changes the plan
-  s8 --> s10: the steps are committed, a fresh reviewer starts
-  s9 --> s8: the issue is rewritten (/final-state)
-  s10 --> s8: findings come back in one area, Claude changes its method or a finding is worth another round
-  s10 --> s13: no finding is worth another round
-  s10 --> s11: 3 rounds pass, or the method needs you, Claude asks you
-  s13 --> s15: you run /ship and give the go
-  s11 --> s8: you answer, the work continues
+  s5 --> s3: you run /prd
+  s5 --> s4: you ask for an interview (/interview)
+  s7 --> s9: you run /implement
+  s9 --> s10: a discovery changes the plan
+  s9 --> s11: the steps are committed, a fresh reviewer starts
+  s10 --> s9: the issue is rewritten (/final-state)
+  s11 --> s9: findings come back in one area, Claude changes its method or a finding is worth another round
+  s11 --> s14: no finding is worth another round
+  s11 --> s12: 3 rounds pass, or the method needs you, Claude asks you
+  s14 --> s16: you run /ship and give the go
+  s12 --> s9: you answer, the work continues
   classDef purple fill:#f1e8ff,stroke:#7c4dcc,color:#3d2370
   classDef blue fill:#e6f0ff,stroke:#2f6fd6,color:#173a73
   classDef orange fill:#fff0e0,stroke:#e07a10,color:#7a3f05
@@ -106,13 +112,14 @@ stateDiagram-v2
   class s2 purple
   class s3 blue
   class s4 purple
-  class s6 blue
-  class s8 orange
+  class s5 purple
+  class s7 blue
   class s9 orange
-  class s10 yellow
-  class s11 orange
-  class s13 yellow
-  class s15 teal
+  class s10 orange
+  class s11 yellow
+  class s12 orange
+  class s14 yellow
+  class s16 teal
 ```
 
 ### The full lifecycle
@@ -129,69 +136,74 @@ stateDiagram-v2
     s2: Getting an opinion
     s3: Draft shown to you
     s4: Being interviewed
+    s5: Reading a walkthrough
   }
-  state "Todo" as s5 {
-    s6: Waiting
-    s7: Skipped, verdict in the loop report
-    s8: Verdicts shown to you
+  state "Todo" as s6 {
+    s7: Waiting
+    s8: Skipped, verdict in the loop report
+    s9: Verdicts shown to you
   }
-  state "In Progress" as s9 {
-    s10: Building in steps
-    s11: Rewriting the plan
-    s12: Under review
-    s13: Stopped, Claude asks you
-    s14: Warned the review is not clean
+  state "In Progress" as s10 {
+    s11: Building in steps
+    s12: Rewriting the plan
+    s13: Under review
+    s14: Stopped, Claude asks you
+    s15: Warned the review is not clean
   }
-  state "Backlog" as s15 {
-    s16: Judged not worth it
-    s17: Verdicts shown to you
+  state "Backlog" as s16 {
+    s17: Judged not worth it
+    s18: Verdicts shown to you
   }
-  state "Canceled" as s18 {
-    s19: Canceled
+  state "Canceled" as s19 {
+    s20: Canceled
   }
-  state "Done" as s20 {
-    s21: Closed, the code already does it
-    s22: Merged and closed
+  state "Done" as s21 {
+    s22: Closed, the code already does it
+    s23: Merged and closed
   }
-  state "In Review" as s23 {
-    s24: At the merge gate
+  state "In Review" as s24 {
+    s25: At the merge gate
   }
   [*] --> s1
   s1 --> s2: you ask for an opinion (/advise)
   s1 --> s3: you run /prd
   s1 --> s4: you ask for an interview (/interview)
+  s1 --> s5: you ask for a walkthrough (/walkthrough)
   s2 --> s3: you run /prd
   s2 --> s4: you ask for an interview (/interview)
-  s3 --> s6: you give the go, Claude files the issue
+  s2 --> s5: you ask for a walkthrough (/walkthrough)
+  s3 --> s7: you give the go, Claude files the issue
   s4 --> s3: you run /prd
-  s6 --> s10: /autonomous-loop takes it, /assess says current or you run /implement
-  s6 --> s16: the subagent judges it not worth its cost
-  s6 --> s7: /autonomous-loop skips it, /assess says not current
-  s6 --> s8: you run /assess or /sweep
-  s10 --> s11: a discovery changes the plan
-  s10 --> s12: the steps are committed, a fresh reviewer starts
-  s16 --> s6: you move it back to Todo
-  s16 --> s10: you run /implement
-  s16 --> s17: you run /assess or /sweep
-  s7 --> s10: /autonomous-loop takes it, /assess says current or you run /implement
-  s7 --> s16: the subagent judges it not worth its cost
-  s7 --> s8: you run /assess or /sweep
-  s8 --> s6: you reject it or you approve current or drifted
-  s8 --> s19: you approve superseded or obsolete
-  s8 --> s21: you approve done
-  s11 --> s10: the issue is rewritten (/final-state)
-  s12 --> s10: findings come back in one area, Claude changes its method or a finding is worth another round
-  s12 --> s24: no finding is worth another round
-  s12 --> s13: 3 rounds pass, or the method needs you, Claude asks you
-  s17 --> s16: you reject it or you approve current or drifted
-  s17 --> s19: you approve superseded or obsolete
-  s17 --> s21: you approve done
-  s24 --> s22: the subagent ships it [in /autonomous-loop] or you run /ship and give the go
-  s13 --> s22: the subagent ships it [in /autonomous-loop]
-  s13 --> s10: you answer, the work continues
-  s13 --> s14: you run /ship
-  s14 --> s10: you answer, the work continues
-  s14 --> s22: you give the go anyway
+  s5 --> s3: you run /prd
+  s5 --> s4: you ask for an interview (/interview)
+  s7 --> s11: /autonomous-loop takes it, /assess says current or you run /implement
+  s7 --> s17: the subagent judges it not worth its cost
+  s7 --> s8: /autonomous-loop skips it, /assess says not current
+  s7 --> s9: you run /assess or /sweep
+  s11 --> s12: a discovery changes the plan
+  s11 --> s13: the steps are committed, a fresh reviewer starts
+  s17 --> s7: you move it back to Todo
+  s17 --> s11: you run /implement
+  s17 --> s18: you run /assess or /sweep
+  s8 --> s11: /autonomous-loop takes it, /assess says current or you run /implement
+  s8 --> s17: the subagent judges it not worth its cost
+  s8 --> s9: you run /assess or /sweep
+  s9 --> s7: you reject it or you approve current or drifted
+  s9 --> s20: you approve superseded or obsolete
+  s9 --> s22: you approve done
+  s12 --> s11: the issue is rewritten (/final-state)
+  s13 --> s11: findings come back in one area, Claude changes its method or a finding is worth another round
+  s13 --> s25: no finding is worth another round
+  s13 --> s14: 3 rounds pass, or the method needs you, Claude asks you
+  s18 --> s17: you reject it or you approve current or drifted
+  s18 --> s20: you approve superseded or obsolete
+  s18 --> s22: you approve done
+  s25 --> s23: the subagent ships it [in /autonomous-loop] or you run /ship and give the go
+  s14 --> s23: the subagent ships it [in /autonomous-loop]
+  s14 --> s11: you answer, the work continues
+  s14 --> s15: you run /ship
+  s15 --> s11: you answer, the work continues
+  s15 --> s23: you give the go anyway
   classDef purple fill:#f1e8ff,stroke:#7c4dcc,color:#3d2370
   classDef blue fill:#e6f0ff,stroke:#2f6fd6,color:#173a73
   classDef tan fill:#f5ecdc,stroke:#a6793a,color:#5a3e14
@@ -202,20 +214,21 @@ stateDiagram-v2
   class s2 purple
   class s3 blue
   class s4 purple
-  class s6 blue
+  class s5 purple
   class s7 blue
-  class s8 tan
-  class s10 orange
+  class s8 blue
+  class s9 tan
   class s11 orange
-  class s12 yellow
-  class s13 orange
+  class s12 orange
+  class s13 yellow
   class s14 orange
-  class s16 blue
-  class s17 tan
-  class s19 tan
-  class s21 tan
-  class s22 teal
-  class s24 yellow
+  class s15 orange
+  class s17 blue
+  class s18 tan
+  class s20 tan
+  class s22 tan
+  class s23 teal
+  class s25 yellow
 ```
 
 ## Review bar
